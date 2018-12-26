@@ -1,0 +1,29 @@
+
+echo 1
+Pr
+echo {"roomId":"9","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo {"roomId":"10","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo {"roomId":"18","roomTpye":"Pu","playerNum":"2","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo {"roomId":"19","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo {"roomId":"20","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo {"roomId":"20","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo 20
+echo 20
+echo 20--@matthew
+echo 20--@matthew
+echo 20
+Pu
+echo 20--@matthew
+echo 20--Pu
+echo {"roomId":"20","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo @iyon--@iyon
+echo {"roomId":"21","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo 21--@matthew
+echo 21--Pu
+echo {"roomId":"21","roomTpye":"Pu","playerNum":"5","isRreveal":"R","difficulty":"E","owner":"@iyon"}
+echo @iyon--@iyon
+echo 22--Pr
+echo {"roomId":"22","roomTpye":"Pr","playerNum":"2","isRreveal":"U","difficulty":"H","owner":"@iyon"}
+echo 22--@matthew
+echo 22--Pr
+echo {"roomId":"22","roomTpye":"Pr","playerNum":"2","isRreveal":"U","difficulty":"H","owner":"@iyon"}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charmber</title>
+    <script type="text/javascript" src="../js/tools.js"></script>
+    <script type="text/javascript">
+        function getRoomInfo(){
+            var HttpXmlObject = getXmlHttpObject();
+            var roomId = getRequestFromUrl("roomId");
+            if(HttpXmlObject){
+                var url = "../Controller/GetRoomInfoController.php";
+                var data = "";
+                if(roomId != ""){
+                    data = "getRoomInfo=" + roomId;
+                }else {
+                    data = "getRoomInfo=owner";
+                }
+                HttpXmlObject.open("post",url,true);
+                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function(){
+                    if(HttpXmlObject.readyState == 4){
+                        if(HttpXmlObject.status == 200){
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("room_id").innerHTML = info_obj.roomId;
+                            $("room_type").innerHTML = info_obj.roomTpye;
+                            $("player_num").innerHTML = info_obj.playerNum;
+                            $("is_reveal").innerHTML = info_obj.isRreveal;
+                            $("difficulty").innerHTML = info_obj.difficulty;
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function getPlayerList(){
+
+        }
+    </script>
+</head>
+<body onload="getRoomInfo()">
+
+<table border="1px">
+    <tr>
+        <th>Room ID</th>
+        <td id="room_id"></td>
+        <th>Player List</th>
+    </tr>
+    <tr>
+        <th>Room Type</th>
+        <td id="room_type"></td>
+        <td id="player_list" rowspan="3"></td>
+    </tr>
+    <tr>
+        <th>Game Mode</th>
+        <td id="is_reveal"></td>
+    </tr>
+    <tr>
+        <th>Difficulty</th>
+        <td id="difficulty"></td>
+    </tr>
+    <tr>
+        <th>Player Number</th>
+        <td id="player_num"></td>
+    </tr>
+</table>
+</body>
+</html>

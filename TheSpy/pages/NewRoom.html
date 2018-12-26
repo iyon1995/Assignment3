@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Room</title>
+</head>
+<body>
+<script type="text/javascript" src="../js/tools.js"></script>
+<script type="text/javascript">
+    function showRoomNum(){
+        var roomid = getRequestFromUrl("roomid");
+        $("roomid").innerHTML = roomid;
+    }
+</script>
+<form method="post" action="../Controller/CreateRoomController.php">
+    <table>
+        <!--<tr>
+            <th>Room ID</th>
+            <th id="roomid"></th>
+        </tr>-->
+        <tr>
+            <th>Room Type</th>
+            <td>
+                <select name="room_type">
+                    <option value="Pu">enable matching</option>
+                    <option value="Pr">disable matching</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Game Mode</th>
+            <td>
+                <select name="is_reveal">
+                    <option value="R">Reveal the identity</option>
+                    <option value="U">Unreveal the identity</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Difficulty</th>
+            <td>
+                <select name="difficulty">
+                    <option value="E">Easy</option>
+                    <option value="H">Hard</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Player Number</th>
+            <td><input type="number" min="2" max="10" step="1" value="5" name="player_num"></td>
+        </tr>
+        <tr>
+            <th>password</th>
+            <td><input type="password" name="password"></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Generate Room"></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

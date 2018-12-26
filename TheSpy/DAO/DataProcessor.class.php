@@ -110,6 +110,20 @@ class DataProcessor{
 
     }
 
+    public function searchRoom($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> bind_result($roomId,$password);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $room = new Room($roomId,$password);
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $room;
+        }
+
+    }
+
     public function isFull($sqlM,$sqlC,$roomId){
         $sql_stmt = $this -> conn -> prepare($sqlM);
         $sql_stmt -> bind_param("s",$roomId);

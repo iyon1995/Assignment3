@@ -42,6 +42,10 @@ class Room
         $this -> owner = $owner;
     }
 
+    public function __construct2($roomId,$password){
+        $this -> roomId = $roomId;
+        $this -> password = $password;
+    }
 
 
     // getter and setter

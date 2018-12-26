@@ -39,6 +39,15 @@ class RoomService
         return $room;
     }
 
+    function searchRoom($roomId){
+        $sql = "select ID,PASSWORD from T_ROOM_MDL where ID=?;";
+        $dataProcessor = new DataProcessor();
+        $room = $dataProcessor -> searchRoom($sql,$roomId);
+        $dataProcessor -> conn_close();
+
+        return $room;
+    }
+
     function generateGame($roomId,$userId){
         $sql = "create table if not exists TEMP_ROOM_" .$roomId ."(
                 ID int AUTO_INCREMENT primary key comment 'id',
@@ -79,3 +88,5 @@ class RoomService
         return $players;
     }
 }
+
+

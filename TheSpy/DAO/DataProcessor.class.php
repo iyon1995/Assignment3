@@ -14,7 +14,7 @@ require_once '../Entity/Room.class.php';
 class DataProcessor{
     private $conn;
     private $dbName = "spy_dev";
-    private $host = "localhost";
+    private $host = "127.0.0.1";
     private $username = "spy_dev";
     private $password = "thespy";
 
@@ -143,6 +143,19 @@ class DataProcessor{
         $sql_stmt -> free_result();
         $sql_stmt -> close();
         return $isSucc;
+    }
+
+    public function getPlayers($sql){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_result($playerId);
+        $sql_stmt->execute();
+        $players = array();
+        while($sql_stmt -> fetch()){
+            array_push($players,$playerId);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $players;
     }
 
 

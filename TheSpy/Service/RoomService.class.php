@@ -68,4 +68,14 @@ class RoomService
         $dataProcessor -> conn_close();
         return $isSucc;
     }
+
+    function getPlayers($roomId){
+        $sql = "select t.PLAYER from TEMP_ROOM_".$roomId." t;";
+        $dataProcessor = new DataProcessor();
+        $players = array();
+        $players = $dataProcessor -> getPlayers($sql);
+        $dataProcessor -> conn_close();
+
+        return $players;
+    }
 }

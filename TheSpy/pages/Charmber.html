@@ -35,8 +35,36 @@
             }
         }
 
-        function getPlayerList(){
+        window.setInterval("getPlayerList()",5000);
 
+        function getPlayerList(){
+            var HttpXmlObject = getXmlHttpObject();
+            if(HttpXmlObject){
+                var url = "../Controller/GetPlayersController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                alert(roomId);
+                if(roomId != ""){
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post",url,true);
+                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function(){
+                    if(HttpXmlObject.readyState == 4){
+                        if(HttpXmlObject.status == 200){
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var players = "<ul>";
+                            for(var i = 0;i < info_obj.length;i++){
+                                players += "<li>" + info_obj[i].userId + "</li>";
+                            }
+                            players += "</ul>";
+                            $("player_list").innerHTML = players;
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
         }
     </script>
 </head>

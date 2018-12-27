@@ -28,6 +28,7 @@
                             $("player_num").innerHTML = info_obj.playerNum;
                             $("is_reveal").innerHTML = info_obj.isRreveal;
                             $("difficulty").innerHTML = info_obj.difficulty;
+                            $("stage").value = info_obj.status;
                         }
                     }
                 }
@@ -35,7 +36,6 @@
             }
         }
 
-        window.setInterval("getPlayerList()",5000);
 
         function getPlayerList(){
             var HttpXmlObject = getXmlHttpObject();
@@ -53,32 +53,124 @@
                         if(HttpXmlObject.status == 200){
                             var info = HttpXmlObject.responseText;
                             var info_obj = eval("(" + info + ")");
-                            var players = "<ul>";
+                            /*var players = "<ul>";
                             for(var i = 0;i < info_obj.length;i++){
                                 players += "<li>" + info_obj[i].userId + "</li>";
                             }
-                            players += "</ul>";
-                            $("player_list").innerHTML = players;
+                            players += "</ul>";*/
+                            var players = "<table>";
+                            for(var i = 0;i < info_obj.length;i++){
+                                players += "<tr><td>" + info_obj[i].userId + "</td>";
+                                players += "<td><input type='button' id='V_"+ info_obj[i].userId +"' onclick='doVote()' hidden> </td></tr>";
+                            }
+                            players += "</table>";
+                            $("vote").innerHTML = players;
+                            if(info_obj.length == $("player_num").innerHTML && $("stage").value == "I"){
+                                if(getRequestFromUrl("roomId") == ""){
+                                    var herf = $("start_game");
+                                    herf.removeAttribute("hidden");
+                                }
+                                $("stage").value = "T1-S";
+                            }
                         }
                     }
                 }
                 HttpXmlObject.send(data);
             }
         }
+
+        function iniGame(){
+            var HttpXmlObject = getXmlHttpObject();
+            if(HttpXmlObject){
+                var url = "../Controller/IniGameController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var playerNum = $("player_num").innerHTML;
+                var difficulty = $("difficulty").innerHTML;
+                if(roomId != "" && playerNum !="" && difficulty !=""){
+                    data = "roomId=" + roomId + "&playerNum=" + playerNum + "&difficulty=" + difficulty;
+                }
+                HttpXmlObject.open("post",url,true);
+                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function(){
+                    if(HttpXmlObject.readyState == 4){
+                        if(HttpXmlObject.status == 200){
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if(info_obj.status == "T1-D"){
+                                $("stage").value = "T1-S";
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function isStart(){
+            //alert("aaa");
+            var HttpXmlObject = getXmlHttpObject();
+            if(HttpXmlObject){
+                var url = "../Controller/Module1.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if(roomId != "" ){
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post",url,true);
+                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function(){
+                    if(HttpXmlObject.readyState == 4){
+                        if(HttpXmlObject.status == 200){
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if(info_obj.status == "D"){
+                                var words = "";
+                                if(info_obj.isSpy == "S"){
+                                    words += info_obj.sWord;
+                                    $("other_word").value = info_obj.nWord;
+                                }else{
+                                    words += info_obj.nWord;
+                                    $("other_word").value = info_obj.sWord;
+                                }
+                                if($("is_reveal") == "U"){
+                                    words += "(" + info_obj.isSpy + ")";
+                                }
+                                $("given_word").value = words;
+                                $("stage").value = "T1-D";
+                                $("game_area").removeAttribute("hidden");
+
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+
+        window.setInterval("dispatcher()",5000);
+
+        function dispatcher(){
+            $gameStage = $("stage").value;
+            if($gameStage == "I"){
+                getPlayerList();
+            }else if($gameStage == "T1-S"){
+                isStart();
+            }
+        }
     </script>
 </head>
 <body onload="getRoomInfo()">
-
+<input type="test" id="stage" value="">
 <table border="1px">
     <tr>
         <th>Room ID</th>
         <td id="room_id"></td>
-        <th>Player List</th>
     </tr>
     <tr>
         <th>Room Type</th>
         <td id="room_type"></td>
-        <td id="player_list" rowspan="3"></td>
     </tr>
     <tr>
         <th>Game Mode</th>
@@ -92,6 +184,17 @@
         <th>Player Number</th>
         <td id="player_num"></td>
     </tr>
-</table>
+</table><br/>
+<input type="button" id="start_game" hidden value="start game" onclick="iniGame()">
+<div id="vote">
+
+</div>
+<div id="game_area" hidden>
+    word:<input type="text" id="given_word" value="">
+    <input type="hidden" id="other_word" value=""><br/><br/>
+    <textarea cols="40" rows="10"  id="chatBox"></textarea><br/><br/>
+    <input type="text" id="content" name="content">
+    <input type="button" value="send" onclick="sendMess()"/>
+</div>
 </body>
 </html>

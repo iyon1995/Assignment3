@@ -172,6 +172,90 @@ class DataProcessor{
         return $players;
     }
 
+    public function getWords($sql,$wordId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$wordId);
+        $sql_stmt -> bind_result($nWord,$sWord);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            /**
+             * N => normal, S => spy
+             */
+            $words = array("N" => $nWord,"S" => $sWord);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $words;
+    }
+
+    public function chooseWord($sql,$difficulty){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$difficulty);
+        $sql_stmt -> bind_result($ID);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $wordId = $ID;
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $wordId;
+    }
+
+    public function setSpy($sql,$spyId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$spyId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function iniGame($sql,$roomId,$wordId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("ii",$wordId,$roomId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function choosePlayerToStart($startId,$sql){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$startId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function getRoomStatus($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> bind_result($status,$result);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $res = array("status" => $status,"other" => $result);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $res;
+    }
+
+    function amISpy($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$userId);
+        $sql_stmt -> bind_result($isSpy);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $isSpy;
+        }
+    }
+
 
     public function getEmp($startNo,$pageSize,$sql){
 

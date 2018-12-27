@@ -3,11 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>Living Room</title>
+    <script type="text/javascript" src="../js/tools.js"></script>
+    <script type="text/javascript">
+        function doSearch() {
+
+            var HttpXmlObject = getXmlHttpObject();
+            var roomId = $("room_id").value;
+            if(HttpXmlObject){
+                var url = "../Controller/SearchRoomController.php";
+                var data = "";
+                if(roomId != ""){
+                    data = "roomId=" + roomId;
+                }else {
+                }
+                HttpXmlObject.open("post",url,true);
+                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function(){
+                    if(HttpXmlObject.readyState == 4){
+                        if(HttpXmlObject.status == 200){
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("room_password_hides").value = info_obj.roomPassword;
+                            $("room_id_hides").value = info_obj.roomId;
+                            $("room_id_password").removeAttribute("hidden");
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+
+        }
+
+        function checkPassword() {
+            var password = $("room_password_hides").value;
+            var inputPassword = $("room_password").value;
+            var roomId = $("room_id_hides").value;
+
+            if(password==inputPassword){
+
+                var url = "Charmber.html?roomId="+roomId;
+                window.location.href=url;
+            }else{
+                alert("Password is wrong.")
+            }
+
+
+        }
+    </script>
 </head>
 <body>
 Welcome!!!<br/>
 <!--<a href="../Controller/CreateRoomController.php">Create Romm</a>-->
 <a href="NewRoom.html">Create Room</a><br/>
-<a href="Charmber.html?roomId=25">Join in room 25</a><br/>
+<!--<a href="Charmber.html?roomId=25">Join in room 25</a><br/>-->
+<input type="text" id="room_id" name="room_id" value="">
+<input type="button" value="Search RoomId" onclick="doSearch()">
+<div hidden id="room_id_password">
+    <table>
+        <tr>
+            <td>please input Password </td>
+            <td><input type="text" id="room_password" value="">
+                <input type="hidden" id="room_password_hides" value="">
+                <input type="hidden" id="room_id_hides" value=""></td>
+
+            <td><input type="button" value="join" onclick="checkPassword()"></td>
+        </tr>
+    </table>
+</div>
+
 </body>
 </html>

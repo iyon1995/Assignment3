@@ -47,6 +47,12 @@ class Room
         $this -> password = $password;
     }
 
+    public function __construct3($roomId,$playerNum,$difficulty){
+        $this -> roomId = $roomId;
+        $this -> difficulty = $difficulty;
+        $this -> playerNum = $playerNum;
+    }
+
 
     // getter and setter
 

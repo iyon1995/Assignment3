@@ -32,7 +32,7 @@ class RoomService
     }
 
     function getRoomInfo($getRoomInfoBy){
-        $sql = "select t.ID,t.ROOM_TP,t.PLAYER_NUM,t.GAME_MODE,t.WORD_MODE,t.PASSWORD,t.STATUS,t.OWNER from T_ROOM_MDL t where t.OWNER = ? or t.ID = ? and t.STATUS = 'I'";
+        $sql = "select t.ID,t.ROOM_TP,t.PLAYER_NUM,t.GAME_MODE,t.WORD_MODE,t.PASSWORD,t.STATUS,t.OWNER from T_ROOM_MDL t where t.OWNER = ? or t.ID = ? and t.STATUS != 'N'";
         $dataProcessor = new DataProcessor();
         $room = $dataProcessor -> getRoomInfo($sql,$getRoomInfoBy);
         $dataProcessor -> conn_close();
@@ -54,6 +54,7 @@ class RoomService
                 PLAYER varchar(32) comment 'player id',
                 ROOM_ID int comment 'room id',
                 STATUS char(1) comment 'status',
+                IS_SPY char(1) comment 'spy',
                 VOTE int comment 'vote'
             ) comment = 'temp table';";
 
@@ -69,7 +70,7 @@ class RoomService
         $dataProcessor = new DataProcessor();
         $diff = $dataProcessor -> isFull($sqlM,$sqlC,$roomId);
         if($diff > 0){
-            $sql = "insert into TEMP_ROOM_".$roomId."(PLAYER,ROOM_ID,STATUS,VOTE) values (?,?,'D',0);";
+            $sql = "insert into TEMP_ROOM_".$roomId."(PLAYER,ROOM_ID,STATUS,VOTE) values (?,?,'N',0);";
             $isSucc = $dataProcessor -> joinGame($sql,$roomId,$userId);
         }else{
             $isSucc = 0;
@@ -79,7 +80,7 @@ class RoomService
     }
 
     function getPlayers($roomId){
-        $sql = "select t.PLAYER from TEMP_ROOM_".$roomId." t;";
+        $sql = "select t.PLAYER from TEMP_ROOM_".$roomId." t ;";
         $dataProcessor = new DataProcessor();
         $players = array();
         $players = $dataProcessor -> getPlayers($sql);

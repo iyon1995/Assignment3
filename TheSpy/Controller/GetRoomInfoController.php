@@ -37,6 +37,7 @@ $roomInfo .= '"roomTpye":"'.$room -> getRoomType() . '",';
 $roomInfo .= '"playerNum":"'.$room -> getPlayerNum() . '",';
 $roomInfo .= '"isRreveal":"'.$room -> getisRreveal() . '",';
 $roomInfo .= '"difficulty":"'.$room -> getDifficulty() . '",';
+$roomInfo .= '"status":"'.$room -> getStatus() . '",';
 $roomInfo .= '"owner":"'.$room -> getOwner() . '"}';
 file_put_contents("../log/ajaxTest.txt","echo " .$roomInfo ."\r\n",FILE_APPEND);
 echo $roomInfo;

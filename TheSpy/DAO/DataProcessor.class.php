@@ -10,6 +10,7 @@
 
 require_once '../Entity/User.class.php';
 require_once '../Entity/Room.class.php';
+require_once '../Entity/Message.class.php';
 
 class DataProcessor{
     private $conn;
@@ -172,112 +173,253 @@ class DataProcessor{
         return $players;
     }
 
-
-    public function getEmp($startNo,$pageSize,$sql){
-
+    public function getWords($sql,$wordId){
         $sql_stmt = $this -> conn -> prepare($sql);
-
-        $sql_stmt -> bind_param("ii",$startNo,$pageSize);
-
-
+        $sql_stmt -> bind_param("i",$wordId);
+        $sql_stmt -> bind_result($nWord,$sWord);
         $sql_stmt->execute();
-
-        $meta = $sql_stmt->result_metadata();
-        while ($field = $meta->fetch_field())
-        {
-            $params[] = &$row[$field->name];
-        }
-
-        call_user_func_array(array($sql_stmt, 'bind_result'), $params);
-
-
-        $counter = 0;
         while($sql_stmt -> fetch()){
-            $i = 0;
-            foreach ($row as $key => $val){
-                $empInfoList[$i] = $val;
-                $i ++;
-            }
-            $employee = new Employee($empInfoList[0],$empInfoList[1],$empInfoList[2],$empInfoList[3],$empInfoList[4]);
-            $empList[$counter] = $employee;
-            $counter ++;
+            /**
+             * N => normal, S => spy
+             */
+            $words = array("N" => $nWord,"S" => $sWord);
         }
-        $sql_stmt->close();
-
-        return $empList;
-
-    }
-
-    public function deleteEmp($emp_id,$sql){
-
-        $sql_stmt = $this -> conn -> prepare($sql);
-        $sql_stmt -> bind_param("s",$emp_id);
-        $sql_stmt -> execute();
-
-        $isSucc = $sql_stmt -> affected_rows;
-
         $sql_stmt -> free_result();
         $sql_stmt -> close();
-        return $isSucc;
-
-
+        return $words;
     }
 
-    public function addEmp($employee,$sql){
+    public function chooseWord($sql,$difficulty){
         $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$difficulty);
+        $sql_stmt -> bind_result($ID);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $wordId = $ID;
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $wordId;
+    }
 
-        $empName = $employee -> getEmpName();
-        $empLevel = $employee -> getEmpLevel();
-        $email = $employee -> getEmail();
-        $salary = $employee -> getSalary();
-
-        $sql_stmt -> bind_param("ssss",$empName,$empLevel,$email,$salary);
+    public function setSpy($sql,$spyId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$spyId);
         $sql_stmt -> execute();
-
         $isSucc = $sql_stmt -> affected_rows;
         $sql_stmt -> free_result();
         $sql_stmt -> close();
         return $isSucc;
     }
 
-    public function getEmpInfo($empId,$sql){
+    public function iniGame($sql,$roomId,$wordId){
         $sql_stmt = $this -> conn -> prepare($sql);
-
-        $sql_stmt -> bind_param("s",$empId);
-        $sql_stmt -> bind_result($empName,$empLevel,$email,$salary);
+        $sql_stmt -> bind_param("ii",$wordId,$roomId);
         $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function choosePlayerToStart($startId,$sql){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$startId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function getRoomStatus($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> bind_result($status,$result);
+        $sql_stmt->execute();
         while($sql_stmt -> fetch()){
-            $employee = new Employee($empId,$empName,$empLevel,$email,$salary);
+            $res = array("status" => $status,"other" => $result);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $res;
+    }
+
+
+    function amISpy($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$userId);
+        $sql_stmt -> bind_result($isSpy);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
             $sql_stmt -> free_result();
             $sql_stmt -> close();
-            return $employee;
+            return $isSpy;
         }
-
     }
 
-    public function editEmpInfo($employee,$sql){
+    function canISpeak($sql,$userId){
         $sql_stmt = $this -> conn -> prepare($sql);
-        $empId = $employee -> getEmpId();
-        $empName = $employee -> getEmpName();
-        $empLevel = $employee -> getEmpLevel();
-        $email = $employee -> getEmail();
-        $salary = $employee -> getSalary();
+        $sql_stmt -> bind_param("s",$userId);
+        $sql_stmt -> bind_result($canTalk);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $canTalk;
+        }
+    }
 
-        $sql_stmt -> bind_param("sssss",$empName,$empLevel,$email,$salary,$empId);
+    function alreadyTalked($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$userId);
         $sql_stmt -> execute();
-
         $isSucc = $sql_stmt -> affected_rows;
         $sql_stmt -> free_result();
         $sql_stmt -> close();
         return $isSucc;
     }
 
+    function getPlayerId($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("si",$userId,$userId);
+        $sql_stmt -> bind_result($id,$status);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $info = array("id" => $id,"status" => $status);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $info;
+    }
+
+    function sendMess($sql,$roomId,$sender,$receiver,$content){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("isss",$roomId,$sender,$receiver,$content);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function nextPlayer($sql,$id){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$id);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function startVote($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    function getMess($sql,$roomId,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("is",$roomId,$userId);
+        $sql_stmt -> bind_result($messId,$sender,$content,$sendTime);
+        $sql_stmt->execute();
+        $messages = array();
+        while($sql_stmt -> fetch()){
+            $message = new Message($messId, $roomId, $sender, $userId, $content, $sendTime);
+            array_push($messages,$message);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $messages;
+    }
+
+    function isRead($sql,$messId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$messId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function canVote($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> bind_result($canVote);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $canVote;
+        }
+    }
+
+    public function vote($sql,$candidate){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$candidate);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function setVoted($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$userId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function getResult($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> bind_result($result);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $result;
+        }
+
+    }
+
+    public function setDead($sql,$playerId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$playerId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function setResult($sql,$roomId,$result,$status){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("ssi",$status,$result,$roomId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
 
     public function conn_close(){
         if (!empty($this->conn)) {
             $this -> conn -> close();
         }
     }
+
+
 
 }
 ?>

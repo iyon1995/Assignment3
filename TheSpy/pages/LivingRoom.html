@@ -6,7 +6,6 @@
     <script type="text/javascript" src="../js/tools.js"></script>
     <script type="text/javascript">
         function doSearch() {
-
             var HttpXmlObject = getXmlHttpObject();
             var roomId = $("room_id").value;
             if(HttpXmlObject){
@@ -44,7 +43,7 @@
                 var url = "Charmber.html?roomId="+roomId;
                 window.location.href=url;
             }else{
-                alert("Password is wrong.")
+                alert("Password is wrong.");
             }
 
 
@@ -53,9 +52,7 @@
 </head>
 <body>
 Welcome!!!<br/>
-<!--<a href="../Controller/CreateRoomController.php">Create Romm</a>-->
 <a href="NewRoom.html">Create Room</a><br/>
-<!--<a href="Charmber.html?roomId=25">Join in room 25</a><br/>-->
 <input type="text" id="room_id" name="room_id" value="">
 <input type="button" value="Search RoomId" onclick="doSearch()">
 <div hidden id="room_id_password">

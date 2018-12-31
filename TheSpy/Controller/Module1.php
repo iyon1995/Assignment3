@@ -32,10 +32,11 @@ if($isStart["status"] == "D"){
     $info .= '"sWord":"'.$sWord.'",';
     $info .= '"nWord":"'.$nWord.'",';
     if($isSpy != "S"){
-        $info .= '"isSpy":"S"}';
-    }else{
         $info .= '"isSpy":"N"}';
+    }else{
+        $info .= '"isSpy":"S"}';
     }
+    setTurn(1);
     echo $info;
 }
 

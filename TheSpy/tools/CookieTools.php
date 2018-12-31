@@ -30,6 +30,10 @@
         setcookie("isJoin","T",time() + (24 * 30 * 3600));
     }
 
+    function setTurn($turn){
+        setcookie("turn",$turn,time() + (24 * 30 * 3600));
+    }
+
     function getCookieVal($key){
         if(!empty($_COOKIE[$key])){
             return $_COOKIE[$key];

@@ -5,38 +5,13 @@
     <title>Game</title>
     <script type="text/javascript" src="../js/tools.js"></script>
     <script type="text/javascript">
-        function getPlayerList(){
-            var HttpXmlObject = getXmlHttpObject();
-            if(HttpXmlObject){
-                var url = "../Controller/GetPlayersController.php";
-                var data = "";
-                var roomId = getRequestFromUrl("roomId");
-                if(roomId != ""){
-                    data = "roomId=" + roomId;
-                }
-                HttpXmlObject.open("post",url,true);
-                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-                HttpXmlObject.onreadystatechange = function(){
-                    if(HttpXmlObject.readyState == 4){
-                        if(HttpXmlObject.status == 200){
-                            var info = HttpXmlObject.responseText;
-                            var info_obj = eval("(" + info + ")");
-                            var players = "<table>";
-                            for(var i = 0;i < info_obj.length;i++){
-                                players += "<tr><td>" + info_obj[i].userId + "</td>";
-                                players += "<td><input type='button' id='V_"+ info_obj[i].userId +"' onclick='doVote()' hidden> </td></tr>";
-                            }
-                            players += "</table>";
-                            $("vote").innerHTML = players;
-                        }
-                    }
-                }
-                HttpXmlObject.send(data);
-            }
+        function aaa(){
+            var date = getDate();
+            alert(date);
         }
     </script>
 </head>
-<body onload="getPlayerList()">
+<body onload="aaa()">
 
 word:<input type="text" id="given_word"><br/><br/>
 <textarea cols="40" rows="10"  id="chatBox"></textarea><br/><br/>

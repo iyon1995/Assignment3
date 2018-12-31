@@ -27,6 +27,6 @@ $room = new Room($roomId,$playerNum,$difficulty);
 $gameService = new GameService();
 $isSucc = $gameService -> iniGame($room);
 if($isSucc != 0){
-    echo '{"status":"T1-D"}';
+    echo '{"status":"D"}';
 }
 ?>

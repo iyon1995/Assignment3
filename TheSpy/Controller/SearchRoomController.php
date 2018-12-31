@@ -20,16 +20,10 @@ $room = $roomService -> searchRoom($roomId);
 
 
 if($room){
-    //echo $room -> getPassword()."aaa";
-
     $roomInfo = '{"roomId":"'.$room -> getRoomId().'",';
     $roomInfo .= '"roomPassword":"'.$room -> getPassword().'"}';
     //file_put_contents("../log/ajaxTest.txt","echo " .$roomInfo."\r\n",FILE_APPEND);
-
-
-
 }else{
-
     $room = "bbb";
 }
 

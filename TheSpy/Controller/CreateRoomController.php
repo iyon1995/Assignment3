@@ -28,6 +28,8 @@ if(!empty($_POST['player_num'])){
 }
 if(!empty($_POST['password'])){
     $password = $_POST['password'];
+}else{
+    $password = "";
 }
 
 $userId = getCookieVal("userId");

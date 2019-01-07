@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body onbeforeunload="aaa()">
+<script type="javascript">
+    window.onunload=function(event){
+        /*var e = window.event||e;
+        e.returnValue=false;
+        aaa();*/
+        event.returnValue = false;
+    };
+
+    /*window.onunload=function(){
+        aaa();
+    }*/
+
+    function aaa(){
+        alert("aaa");
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charmber</title>
+    <script type="text/javascript" src="../js/tools.js"></script>
+    <script type="text/javascript">
+
+        /*
+         get the room information from the database
+         */
+        function getRoomInfo() {
+            var HttpXmlObject = getXmlHttpObject();
+            var roomId = getRequestFromUrl("roomId");
+            if (HttpXmlObject) {
+                var url = "../Controller/GetRoomInfoController.php";
+                var data = "";
+                if (roomId != "") {
+                    data = "getRoomInfo=" + roomId;
+                } else {
+                    data = "getRoomInfo=owner";
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("room_id").innerHTML = info_obj.roomId;
+                            $("room_type").innerHTML = info_obj.roomTpye;
+                            $("player_num").innerHTML = info_obj.playerNum;
+                            $("is_reveal").innerHTML = info_obj.isRreveal;
+                            $("difficulty").innerHTML = info_obj.difficulty;
+                            $("stage").value = info_obj.status;
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+
+        function getPlayerList() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/GetPlayersController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var players = "<table>";
+                            for (var i = 0; i < info_obj.length; i++) {
+                                players += "<tr><td>" + info_obj[i].userId + "</td>";
+                                players += "<td><input type='button' value='vote' id='V_" + info_obj[i].userId + "' name='vote_btn' " +
+                                    "onclick=\"doVote(\'" + info_obj[i].userId + "\')\" hidden> </td></tr>";
+                            }
+                            players += "</table>";
+                            $("vote").innerHTML = players;
+                            if (info_obj.length == $("player_num").innerHTML && $("stage").value == "I") {
+                                if (getRequestFromUrl("roomId") == "") {
+                                    var herf = $("start_game");
+                                    herf.removeAttribute("hidden");
+                                }
+                                $("stage").value = "S";
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         *
+         * @param candidate
+         */
+        function doVote(candidate) {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/VoteController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "" && candidate != "") {
+                    data = "roomId=" + roomId + "&candidate=" + candidate;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+
+                            $("stage").value = info_obj.status;
+                            var buttonList = document.getElementsByName("vote_btn");
+                            for(var i=0; i < buttonList.length; i++){
+                                buttonList[i].setAttribute("hidden","");
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function iniGame() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/IniGameController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var playerNum = $("player_num").innerHTML;
+                var difficulty = $("difficulty").innerHTML;
+                if (roomId != "" && playerNum != "" && difficulty != "") {
+                    data = "roomId=" + roomId + "&playerNum=" + playerNum + "&difficulty=" + difficulty;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+
+                            if (info_obj.status == "D") {
+                                $("stage").value = "S";
+                            }
+                            $("start_game").setAttribute("hidden", "");
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function isStart() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/Module1.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.status == "D") {
+                                var words = "";
+                                if (info_obj.isSpy == "S") {
+                                    words += info_obj.sWord;
+                                    $("other_word").value = info_obj.nWord;
+                                } else {
+                                    words += info_obj.nWord;
+                                    $("other_word").value = info_obj.sWord;
+                                }
+                                if ($("is_reveal").innerHTML == "U") {
+                                    words += "(" + info_obj.isSpy + ")";
+                                }
+                                $("identity").value = info_obj.isSpy;
+                                $("given_word").value = words;
+                                $("stage").value = "D";
+                                $("game_area").removeAttribute("hidden");
+
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function canISpeak() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/RightToSpeakController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.canTalk == "A") {
+                                $("stage").value = "A";
+                                $("talk_area").removeAttribute("hidden");
+                            }else if($("me").value == "D"){
+                                $("stage").value = "A";
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function sendMess() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/SendMessageController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var content = $("content").value;
+                if (roomId != "") {
+                    data = "roomId=" + roomId + "&content=" + content;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.isSucc == "S") {
+                                var mess = info_obj.userId;
+                                var date = getDate();
+                                mess += " (" + date + ") :\r\n";
+                                mess += "&#09;" + content + "\r\n";
+                                var chatBox = $("chat_box").innerHTML;
+                                chatBox += mess;
+                                $("chat_box").innerHTML = chatBox;
+                                $("chat_box").scrollTop = $("chat_box").scrollHeight;
+                                $("talk_area").setAttribute("hidden", "");
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function canVote() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/CanVoteController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("stage").value = "V";
+                            if($("me").value != "D"){
+                                var buttonList = document.getElementsByName("vote_btn");
+                                for (var i = 0; i < buttonList.length; i++) {
+                                    buttonList[i].removeAttribute("hidden");
+                                }
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function doGetMess() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/GetMessageController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            for (var i = 0; i < info_obj.length; i++) {
+                                var message = info_obj[i].sender + " (" + info_obj[i].sendTime + ") : \r\n";
+                                message += "&#09;" + info_obj[i].content + "\r\n";
+                                var chatBox = $("chat_box");
+                                var app = chatBox.innerHTML;
+                                app += message;
+                                chatBox.innerHTML = app;
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                                var me = info_obj[0].receiver;
+                                var myStatus = $("me");
+                                myStatus.setAttribute("name",me);
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function allVoted(){
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/CheckAllVotedController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var playerNum = $("player_num").innerHTML;
+                if (roomId != "" && playerNum != "") {
+                    data = "roomId=" + roomId + "&playerNum=" + playerNum;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("stage").value = info_obj.status;
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+
+        function doGetResult() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/GetResultController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var result = info_obj.result;
+                            var results = result.split(" ");
+                            var dead = results[0];
+                            var identity = results[1];
+                            var isWin = results[2];
+                            if(results[0] == "NONE"){
+                                var content = "No one die tonight.";
+                            }else{
+                                var btn = $("V_" + results[0]);
+                                btn.removeAttribute("name");
+                                btn.removeAttribute("hidden");
+                                btn.setAttribute("type","text");
+                                btn.value = "dead";
+                                if(results[0] == $("me").name){
+                                    $("me").value = "D";
+                                }
+                                var isSpy = $("identity").value;
+                                var content = dead + " is dead";
+                                if($("is_reveal").innerHTML == "U"){
+                                    content += " He/she is " + identity + ".";
+                                }
+                            }
+                            if(isWin == "T"){
+                                content += " Next Round!!"
+                            }else{
+                                $("stage").value = "E";
+                                if(isWin == isSpy){
+                                    content += " You are the winner!!";
+                                    $("result").value = "W";
+                                }else{
+                                    content += " You lose!";
+                                    $("result").value = "L";
+                                }
+                            }
+                            var mess = "sys";
+                            var date = getDate();
+                            mess += " ( " + date + " ) :\r\n";
+                            mess += "&#09;" + content + "\r\n";
+                            var chatBox = $("chat_box").innerHTML;
+                            chatBox += mess;
+                            $("chat_box").innerHTML = chatBox;
+                            $("chat_box").scrollTop = $("chat_box").scrollHeight;
+                            $("stage").value = info_obj.status;
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+
+
+        function leftRoom(){
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/LeftRoomController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            // TODO
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function doSettleAccounts(){
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/SettleAccountsController.php";
+                var data = "";
+                var isSpy = $("identity").value;
+                var isWin = $("result").value;
+                if (isSpy != "" && isWin != "") {
+                    data = "isSpy=" + isSpy + "&isWin=" + isWin;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            // TODO
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        function isEnd(){
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/IsEndController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var status = info_obj.status;
+                            if(status == "N"){
+                                $("stage").value = "E";
+                            }
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        window.onbeforeunload=function(){
+            leftRoom();
+        };
+
+        window.setInterval("dispatcher()", 5000);
+
+        function dispatcher() {
+            isEnd();
+            var gameStage = $("stage").value;
+            if (gameStage == "I") {
+                getPlayerList();
+            } else if (gameStage == "S") {
+                isStart();
+            } else if (gameStage == "D") {
+                canISpeak();
+                doGetMess();
+            } else if (gameStage == "A") {
+                canVote();
+                doGetMess();
+            } else if(gameStage == "V"){
+                allVoted();
+            } else if(gameStage == "R"){
+                doGetResult();
+            } else if(gameStage == "E"){
+                doSettleAccounts();
+            }
+        }
+    </script>
+</head>
+<body onload="getRoomInfo()">
+<input type="test" id="stage" value="">
+<input type="test" id="me" value="A">
+<input type="test" id="identity" value="">
+<input type="test" id="result" value="I">
+<table border="1px">
+    <tr>
+        <th>Room ID</th>
+        <td id="room_id"></td>
+    </tr>
+    <tr>
+        <th>Room Type</th>
+        <td id="room_type"></td>
+    </tr>
+    <tr>
+        <th>Game Mode</th>
+        <td id="is_reveal"></td>
+    </tr>
+    <tr>
+        <th>Difficulty</th>
+        <td id="difficulty"></td>
+    </tr>
+    <tr>
+        <th>Player Number</th>
+        <td id="player_num"></td>
+    </tr>
+</table>
+<br/>
+<input type="button" id="start_game" hidden value="start game" onclick="iniGame()">
+<input type="button" id="left_room" value="left room" onclick="leftRoom()"/>
+<!--<input type="button" id="next_round" hidden value="next round" onclick="iniGame()">-->
+<div id="vote">
+
+</div>
+<div id="game_area" hidden>
+    word:<input type="text" id="given_word" value="">
+    <input type="hidden" id="other_word" value=""><br/><br/>
+    <textarea cols="40" rows="10" id="chat_box"></textarea><br/><br/>
+    <div id="talk_area" hidden>
+        <input type="text" id="content" name="content" value="">
+        <input type="button" value="send" onclick="sendMess()"/>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+.mainholder{
+  background-color:#9E8459;
+  float:left;
+  max-height: 50%;
+
+}
+
+#pic{
+  max-width: 50%;
+  float:left;
+
+
+}
+
+.subholder{
+  float:left;
+  width: 40%;
+  /* background-color:#5E5489; */
+  margin: 2em;
+
+}
+
+#iframe{
+
+  height: 40%;
+}
+
+.p{
+  font-size: 0.85em;
+}

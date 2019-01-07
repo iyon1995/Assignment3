@@ -1,33 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <title>Living Room</title>
+    <meta charset="utf-8">
+    <meta name=”viewport” content=”width=device-width, initial-scale=1″>
+    <title>LivingRoom</title>
+    <!-- <link id="link" rel="stylesheet" href="welcome.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style media="screen">
+
+        body {
+            margin: 8px;
+        }
+
+        .mainholder {
+            background-color: #9E8459;
+            float: left;
+            max-height: 50%;
+
+        }
+
+        #pic {
+            max-width: 50%;
+            float: left;
+
+        }
+
+        .subholder {
+            float: right;
+            width: 44%;
+
+            /* background-color:#5E5489; */
+            margin: 2em;
+
+        }
+
+        #iframe {
+            position: absolute;
+            right: 35px;
+            top: 220px;
+            height: 40%;
+        }
+
+        /*p{*/
+        /*font-size: 0.85em;*/
+        /*}*/
+
+        #room_id_password {
+            position: absolute;
+            top: 112px;
+            right: 90px;
+        }
+
+    </style>
     <script type="text/javascript" src="../js/tools.js"></script>
     <script type="text/javascript">
+        function jumpToNewRoom() {
+            //window.open("NewRoom.html","_blank");
+            window.location.href = "NewRoom.html";
+            // document.getElementById("iframe").height=0;
+            // document.getElementById("iframe").height=document.getElementById("iframe").contentWindow.document.body.scrollHeight;
+
+        }
+
         function doSearch() {
             var HttpXmlObject = getXmlHttpObject();
             var roomId = $("room_id").value;
-            if(HttpXmlObject){
+            if (HttpXmlObject) {
                 var url = "../Controller/SearchRoomController.php";
                 var data = "";
-                if(roomId != ""){
+                if (roomId != "") {
                     data = "roomId=" + roomId;
-                }else {
+                } else {
                 }
-                HttpXmlObject.open("post",url,true);
-                HttpXmlObject.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-                HttpXmlObject.onreadystatechange = function(){
-                    if(HttpXmlObject.readyState == 4){
-                        if(HttpXmlObject.status == 200){
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
                             var info = HttpXmlObject.responseText;
                             var info_obj = eval("(" + info + ")");
                             $("room_password_hides").value = info_obj.roomPassword;
                             $("room_id_hides").value = info_obj.roomId;
-                            $("room_id_password").removeAttribute("hidden");
+                            //alert(info_obj.roomPassword);
+                            if (info_obj.roomPassword != "") {
+                                $("room_id").setAttribute("hidden", "");
+                                $("room_password").removeAttribute("hidden");
+                            }else{
+                                $("room_password").setAttribute("hidden", "");
+                                //$("password_alert").setAttribute("hidden", "");
+                            }
+                            //$("room_id_password").removeAttribute("hidden");
+                            $("join_btn").removeAttribute("hidden");
+                            $("search_room").setAttribute("hidden", "");
                         }
                     }
-                }
+                };
+                HttpXmlObject.send(data);
+            }
+
+        }
+
+        function doMatch(){
+            var HttpXmlObject = getXmlHttpObject();
+            var roomId = $("room_id").value;
+            if (HttpXmlObject) {
+                var url = "../Controller/MatchRoomController.php";
+                var data = "";
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var roomId = info_obj.roomId;
+                            if(roomId == 0){
+                                alert("no room available!!!")
+                            }else{
+                                $("room_id").value = roomId;
+                                $("room_id").removeAttribute("hidden");
+                                $("search_room").removeAttribute("hidden");
+                            }
+                        }
+                    }
+                };
                 HttpXmlObject.send(data);
             }
 
@@ -37,36 +135,83 @@
             var password = $("room_password_hides").value;
             var inputPassword = $("room_password").value;
             var roomId = $("room_id_hides").value;
-
-            if(password==inputPassword){
-
-                var url = "Charmber.html?roomId="+roomId;
-                window.location.href=url;
-            }else{
+            if (password == inputPassword || password == "") {
+                var url = "Charmber.html?roomId=" + roomId;
+                window.location.href = url;
+            } else {
                 alert("Password is wrong.");
             }
-
-
         }
+
+        function showSearch() {
+            $("room_id").removeAttribute("hidden");
+            $("search_room").removeAttribute("hidden");
+        }
+
+
     </script>
+
 </head>
-<body>
-Welcome!!!<br/>
-<a href="NewRoom.html">Create Room</a><br/>
-<input type="text" id="room_id" name="room_id" value="">
-<input type="button" value="Search RoomId" onclick="doSearch()">
-<div hidden id="room_id_password">
-    <table>
-        <tr>
-            <td>please input Password </td>
-            <td><input type="password" id="room_password" value="">
-                <input type="hidden" id="room_password_hides" value="">
-                <input type="hidden" id="room_id_hides" value=""></td>
+<body onload="checkIllegalLogin('LivingRoom')">
+<div class="mainholder">
+    <img id="pic" src="pic/welcome.jpg" alt="">
 
-            <td><input type="button" value="join" onclick="checkPassword()"></td>
-        </tr>
-    </table>
+    <div class="subholder">
+        <div></div>
+        <table style="border-spacing:0px 10px;">
+            <tr>
+                <td colspan="4">
+                    <button type="button" class="btn btn-default btn-lg" name="button" onclick="jumpToNewRoom()">
+                        Create a Room
+                    </button>
+                </td>
+            </tr>
+            <tr><td>&nbsp</td></tr>
+            <tr>
+                <td colspan="4">
+                    <button type="button" class="btn btn-default btn-lg" name="button" onclick="showSearch()">
+                        Search a Room
+                    </button>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</td>
+                <td>
+                    <input type="text" id="room_id" name="room_id" value="" hidden placeholder="Please enter the room id">
+                    <input type="button" id="search_room" value="OK" onclick="doSearch()" hidden>
+                    <input type="password" id="room_password" value="" hidden placeholder="Password needed">
+                    <input type="hidden" id="room_password_hides" value="">
+                    <input type="hidden" id="room_id_hides" value="">
+                    <input hidden id="join_btn" type="button" value="join" onclick="checkPassword()">
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <button type="button" class="btn btn-default btn-lg" name="button" onclick="doMatch()">
+                        Find a Room
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <div hidden id="room_id_password">
+            <!--<table>
+                <tr>
+                    <td id="password_alter">Password needed</td>
+                    <td>
+                        <input id="input_password" type="password" id="room_password" value="">
+                        <input type="hidden" id="room_password_hides" value="">
+                        <input type="hidden" id="room_id_hides" value="">
+                    </td>
+                </tr>
+                <tr><td><input id="join_btn" type="button" value="join" onclick="checkPassword()"></td></tr>
+            </table>-->
+        </div>
+
+        <iframe id="iframe" src="RoomIns.html" frameborder="no" style="width: 600px;height: 300px"></iframe>
+
+    </div>
+
 </div>
-
 </body>
 </html>

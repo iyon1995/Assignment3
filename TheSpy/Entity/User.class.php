@@ -50,6 +50,23 @@ class User
         $this -> status = $status;
     }
 
+    public function __construct3($userId,$userName,$status)
+    {
+        $this -> userId = $userId;
+        $this -> userName = $userName;
+        $this -> status = $status;
+    }
+
+    public function __construct6($userId,$userName,$level,$gRound,$gwRound,$gwsRound)
+    {
+        $this -> userId = $userId;
+        $this -> userName = $userName;
+        $this -> level = $level;
+        $this -> gRound = $gRound;
+        $this -> gwRound = $gwRound;
+        $this -> gwsRound = $gwsRound;
+    }
+
     public function __construct8($userId,$userName,$level,$gRound,$gwRound,$gwsRound,$friendLst,$status)
     {
         $this -> userId = $userId;

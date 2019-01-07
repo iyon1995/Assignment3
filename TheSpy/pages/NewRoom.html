@@ -5,6 +5,7 @@
     <title>New Room</title>
 </head>
 <body>
+<link id="link" rel="stylesheet" href="css/welcome.css">
 <script type="text/javascript" src="../js/tools.js"></script>
 <script type="text/javascript">
     function showRoomNum(){
@@ -12,6 +13,13 @@
         $("roomid").innerHTML = roomid;
     }
 </script>
+<div class="mainholder">
+  <img id="pic" src="pic/welcome.jpg" alt="">
+  <div class="subholder">
+    <p style="font-size:1.9em">Choose the room type </p>
+    <p style="font-size:1.9em">Identity cover or not </p>
+    <p style="font-size:1.9em">Set Password</p>
+
 <form method="post" action="../Controller/CreateRoomController.php">
     <table>
         <!--<tr>
@@ -58,5 +66,8 @@
         </tr>
     </table>
 </form>
+</div>
+
+    </div>
 </body>
 </html>

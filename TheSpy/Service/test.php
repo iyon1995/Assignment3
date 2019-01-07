@@ -9,11 +9,8 @@
  */
 require_once '../DAO/DataProcessor.class.php';
 
-$sql = "select t.PLAYER,t.IS_SPY,t.VOTE from TEMP_ROOM_52 t order by t.VOTE desc limit 2;";
-$dataProcessor = new DataProcessor();
-$res = $dataProcessor -> execute_dql($sql);
-while($dead = $res ->fetch_row()){
-    print_r($dead);
+for ($i = 46; $i <= 83; $i++) {
+    echo "drop table TEMP_ROOM_" . $i . ";<br/>";
 }
 
 ?>

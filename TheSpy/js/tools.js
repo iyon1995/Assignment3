@@ -54,3 +54,64 @@ function getDate(){
         + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     return dateF;
 }
+
+
+function checkIllegalLogin(location){
+    var HttpXmlObject = getXmlHttpObject();
+    if (HttpXmlObject) {
+        var url = "../Controller/CheckLegalityController.php";
+        var data = "location=" + location;
+        HttpXmlObject.open("post", url, true);
+        HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        HttpXmlObject.onreadystatechange = function () {
+            if (HttpXmlObject.readyState == 4) {
+                if (HttpXmlObject.status == 200) {
+                    var info = HttpXmlObject.responseText;
+                    var info_obj = eval("(" + info + ")");
+                    var isLegal = info_obj.errno;
+                    if(isLegal == 1){
+                        window.location.href = "../Login.html"
+                    }
+                }
+            }
+        };
+        HttpXmlObject.send(data);
+    }
+}
+
+
+/**
+ *
+ * @param userId
+ * @param content
+ * @param time
+ * @param imgPath
+ * @returns {string}
+ */
+function htmlDisplayMess(userId,userName,content,time,imgPath){
+
+
+    var updateText = "<li>";
+    updateText += "<p class=\"system\"><span>";
+    updateText += time;
+    updateText += "</span></p>";
+    updateText += "<div>";
+    updateText += "<div style='text-align: left;margin-top: 0.1%'>";
+    updateText += userName;
+    updateText += "</div>";
+    updateText += "<div id=\"pt_";
+    updateText += userId;
+    updateText += "\" class=\"main\">";
+    updateText += "<img class=\"player\" width=\"10%\" src=\"";
+    updateText += imgPath;
+    updateText += "\">";
+    updateText += "<div class=\"player_text\">";
+    updateText += content;
+    updateText += "</div>";
+    updateText += "</div>";
+    updateText += "</div>";
+    updateText += "</li>";
+    return updateText;
+}
+
+

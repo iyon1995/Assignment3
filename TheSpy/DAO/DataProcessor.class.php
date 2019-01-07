@@ -14,9 +14,9 @@ require_once '../Entity/Message.class.php';
 
 class DataProcessor{
     private $conn;
-    private $dbName = "spy_dev";
+    private $dbName = "spy_test";
     private $host = "127.0.0.1";
-    private $username = "spy_dev";
+    private $username = "spy_test";
     private $password = "thespy";
 
     public function __construct()
@@ -69,6 +69,21 @@ class DataProcessor{
         }
 
 
+    }
+
+
+    public function register($sql,$user){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $userId = $user -> getUserId();
+        $userName = $user -> getUserName();
+        $password = $user -> getPassword();
+        $staus = $user -> getStatus();
+        $sql_stmt -> bind_param("ssss",$userId,$userName,$password,$staus);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
     }
 
 
@@ -293,6 +308,19 @@ class DataProcessor{
         return $info;
     }
 
+    function getPlayersInfo($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$userId);
+        $sql_stmt -> bind_result($userName,$level,$gRound,$gwRound,$gwsRound);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $user = new User($userId,$userName,$level,$gRound,$gwRound,$gwsRound);
+        }
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $user;
+    }
+
     function sendMess($sql,$roomId,$sender,$receiver,$content){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("isss",$roomId,$sender,$receiver,$content);
@@ -413,13 +441,44 @@ class DataProcessor{
         return $isSucc;
     }
 
+
+    public function settleExp($sql,$userId,$exp){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("is",$exp,$userId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function settleAccounts($sql,$userId,$exp,$result){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("iiis",$exp,$result['isWin'],$result['isSpyWin'],$userId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
+    public function isEnd($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> bind_result($status);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $status;
+        }
+    }
+
+
     public function conn_close(){
         if (!empty($this->conn)) {
             $this -> conn -> close();
         }
     }
-
-
-
 }
 ?>

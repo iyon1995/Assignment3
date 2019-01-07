@@ -19,6 +19,8 @@ if($getRoomInfoBy == 'owner'){
     $getRoomInfoBy = getCookieVal("owner");
 }
 
+setExp("i");
+
 $userId = getCookieVal("userId");
 
 file_put_contents("../log/ajaxTest.txt","echo " .$getRoomInfoBy."--".$userId."\r\n",FILE_APPEND);
@@ -27,8 +29,13 @@ $roomService = new RoomService();
 $room = $roomService -> getRoomInfo($getRoomInfoBy);
 if(empty($_COOKIE['isJoin'])){
     file_put_contents("../log/ajaxTest.txt","echo " .$room -> getRoomId()."--".$room -> getRoomType()."\r\n",FILE_APPEND);
-    $roomService -> generateGame($room -> getRoomId(),$userId);
-    joinInRoom();
+    $isSucc = $roomService -> generateGame($room -> getRoomId(),$userId);
+    if($isSucc == 0){
+        header("Location: ../pages/LivingRoom.html?errno=2");
+        exit();
+    }else{
+        joinInRoom();
+    }
 }
 
 $roomInfo = '{';

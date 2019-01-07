@@ -48,6 +48,17 @@ class RoomService
         return $room;
     }
 
+    function matchRoom(){
+        $sql = "select t.ID from T_ROOM_MDL t where t.STATUS = 'I' and t.PASSWORD = '' and t.ROOM_TP = 'Pu' limit 1;";
+        $dataProcessor = new DataProcessor();
+        $res = $dataProcessor -> execute_dql($sql);
+        $roomId = $res -> fetch_row()[0];
+        $res -> free();
+        $dataProcessor -> conn_close();
+
+        return $roomId;
+    }
+
     function generateGame($roomId,$userId){
         $sql = "create table if not exists TEMP_ROOM_" .$roomId ."(
                 ID int AUTO_INCREMENT primary key comment 'id',
@@ -61,7 +72,8 @@ class RoomService
         $dataProcessor = new DataProcessor();
         $dataProcessor -> execute_dml($sql);
         $dataProcessor -> conn_close();
-        $this -> joinGame($roomId,$userId);
+        $isSucc = $this -> joinGame($roomId,$userId);
+        return $isSucc;
     }
 
     function joinGame($roomId,$userId){
@@ -88,6 +100,28 @@ class RoomService
 
         return $players;
     }
+
+
+    function dropRoom($roomId){
+        $sql = "drop table TEMP_ROOM_".$roomId.";";
+        $dataProcessor = new DataProcessor();
+        $dataProcessor -> execute_dml($sql);
+        $sql = "update T_ROOM_MDL set ROOM_TP = NULL,PLAYER_NUM = NULL,GAME_MODE = NULL,";
+        $sql .= "WORD_MODE = NULL,PASSWORD = NULL,STATUS = 'N',OWNER = NULL,RESULT = NULL,WORD_ID = NULL ";
+        $sql .= "where ID = ?";
+        $dataProcessor -> ownerLeftRoom($sql,$roomId);
+        $dataProcessor -> conn_close();
+
+    }
+
+    function isEnd($roomId){
+        $sql = "select t.STATUS from T_ROOM_MDL t where t.ID = ?; ";
+        $dataProcessor = new DataProcessor();
+        $status = $dataProcessor -> isEnd($sql,$roomId);
+        $dataProcessor -> conn_close();
+        return $status;
+    }
+
 }
 
 

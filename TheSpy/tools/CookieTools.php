@@ -34,6 +34,30 @@
         setcookie("turn",$turn,time() + (24 * 30 * 3600));
     }
 
+    function setExp($operateTpye){
+        if($operateTpye == "i"){
+            setcookie("exp",1,time() + (24 * 30 * 3600));
+        }else if($operateTpye == "w"){
+            $exp = getCookieVal("exp");
+            $exp += 3;
+            setcookie("exp",$exp,time() + (24 * 30 * 3600));
+        }else if($operateTpye == "l"){
+            $exp = getCookieVal("exp");
+            $exp += 1;
+            setcookie("exp",$exp,time() + (24 * 30 * 3600));
+        }else if($operateTpye == "p"){
+            $exp = getCookieVal("exp");
+            $exp -= 2;
+            setcookie("exp",$exp,time() + (24 * 30 * 3600));
+        }else if($operateTpye == "c"){
+            setcookie("exp",0,time() + (24 * 30 * 3600));
+        }
+    }
+
+    function delCookie($key){
+        setcookie($key,"",time() - (24 * 30 * 3600));
+    }
+
     function getCookieVal($key){
         if(!empty($_COOKIE[$key])){
             return $_COOKIE[$key];

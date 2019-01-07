@@ -1,19 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="content-type" content="text/html;chaeset=utf-8" />
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
     <title>The Spy</title>
-</head>
-<body>
-<form method="post" action="Controller/LoginController.php">
-    test
-    <table>
-        <tr><td>user id  :</td><td><input type="text" name="userid" value=""></td></tr>
-        <tr><td>password :</td><td><input type="password" name="password" value=""></td></tr>
-        <tr><td colspan="2"><input type="submit" value="submit"></td></tr>
-    </table>
-</form>
+    <link id="link" rel="stylesheet" href="pages/css/welcome.css">
 
-</body>
+    <script type="text/javascript">
+    function backToRegist() {
+      window.location.href="index.html";
+    }
+
+
+    </script>
+  </head>
+  <body>
+    <div class="mainholder">
+      <img id="pic" src="pages/pic/welcome.jpg" alt="">
+      <div class="subholder">
+        <p style="font-size:1.9em">Start the Game </p>
+
+        <p style="font-size:1.9em">registe with your Email address</p>
+    <table>
+      <form class="loginform" action="Controller/LoginController.php" method="post">
+        <tr>
+          <th align="left">Your Email address</th>
+        </tr>
+        <tr>
+          <td><input id="email" type="text" name="userid" value=""></td>
+
+        </tr>
+        <tr>
+          <th align="left">Your Password</th>
+        </tr>
+
+        <tr>
+          <td><input id="password" type="password" name="password" value=""></td>
+        </tr>
+
+        <tr>
+          <td><input type="submit" name="" value="OK"></td>
+
+        </tr>
+        <tr>
+          <td><input type="button" name="" value="Back to regist" onclick="backToRegist()"></td>
+
+        </tr>
+
+
+      </form>
+    </table>
+  </div>
+
+      </div>
+
+  </body>
 </html>

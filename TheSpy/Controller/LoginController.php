@@ -10,6 +10,7 @@
 
 require_once '../Service/UserService.class.php';
 require_once '../tools/CookieTools.php';
+require_once '../tools/PhpValidate.php';
 
 $userid = "";
 if(!empty($_POST['userid'])){

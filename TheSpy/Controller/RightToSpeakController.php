@@ -10,6 +10,7 @@
 
 require_once '../tools/CookieTools.php';
 require_once '../Service/GameService.class.php';
+require_once '../tools/PhpValidate.php';
 
 if(!empty($_POST['roomId'])){
     $roomId = $_POST['roomId'];

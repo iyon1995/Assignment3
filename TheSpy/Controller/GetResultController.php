@@ -4,14 +4,16 @@
  * Author: xiyuan.wang
  * Date: 12/29/2018
  * Time: 4:25 PM
- * Version:
- * Description:
+ * Version: 1.0
+ * Description: FOr players to get result
  */
 require_once '../Service/GameService.class.php';
 require_once '../tools/CookieTools.php';
+require_once '../tools/PhpValidate.php';
 
 if(!empty($_POST['roomId'])){
     $roomId = $_POST['roomId'];
+    $roomId = checkSpecialChar($roomId);
 }
 //$roomId = 56;
 $gameService = new GameService();

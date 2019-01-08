@@ -4,19 +4,22 @@
  * Author: rui.song
  * Date: 12/24/2018
  * Time: 2:56 PM
- * Version:
- * Description:
+ * Version: 1.0
+ * Description: For Owner to initial room or for players to join the room
  */
 
 require_once '../Service/RoomService.class.php';
 require_once '../Entity/Room.class.php';
 require_once '../tools/CookieTools.php';
+require_once '../tools/PhpValidate.php';
 
 if(!empty($_POST['getRoomInfo'])){
     $getRoomInfoBy = $_POST['getRoomInfo'];
+    $getRoomInfoBy = checkSpecialChar($getRoomInfoBy);
 }
 if($getRoomInfoBy == 'owner'){
     $getRoomInfoBy = getCookieVal("owner");
+    $getRoomInfoBy = checkSpecialChar($getRoomInfoBy);
 }
 
 setExp("i");

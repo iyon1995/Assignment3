@@ -83,15 +83,49 @@ function checkIllegalLogin(location){
 /**
  *
  * @param userId
+ * @param userName
  * @param content
  * @param time
  * @param imgPath
+ * @param position
  * @returns {string}
  */
-function htmlDisplayMess(userId,userName,content,time,imgPath){
+function htmlDisplayMess(userId,userName,content,time,imgPath,position){
 
+    var className = "";
+    var textDiv = "";
+    if(position == "left") {
+        className = "player";
+        textDiv = "<div style='text-align: left;margin-top: 0.1%;font-size:9px'>";
+    }else{
+        className = "self";
+        textDiv = "<div style='text-align: right;margin-top: 0.1%;font-size:9px'>";
+    }
 
     var updateText = "<li>";
+    updateText += "<p class=\"system\"><span>";
+    updateText += time;
+    updateText += "</span></p>";
+    updateText += "<div>";
+    updateText += "<div id=\"pt_";
+    updateText += userId;
+    updateText += "\" class=\"main\">";
+    updateText += "<img class=\"";
+    updateText += className;
+    updateText += "\"width=\"12%\" src=\"";
+    updateText += imgPath;
+    updateText += "\">";
+    updateText += textDiv;
+    updateText += userName;
+    updateText += "</div>";
+    updateText += "<div class="+ className +"_text>";
+    updateText += content;
+    updateText += "</div>";
+    updateText += "</div>";
+    updateText += "</div>";
+    updateText += "</li>";
+
+    /*var updateText = "<li>";
     updateText += "<p class=\"system\"><span>";
     updateText += time;
     updateText += "</span></p>";
@@ -110,7 +144,7 @@ function htmlDisplayMess(userId,userName,content,time,imgPath){
     updateText += "</div>";
     updateText += "</div>";
     updateText += "</div>";
-    updateText += "</li>";
+    updateText += "</li>";*/
     return updateText;
 }
 

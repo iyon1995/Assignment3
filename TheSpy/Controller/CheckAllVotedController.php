@@ -4,19 +4,22 @@
  * Author: rui.song
  * Date: 12/29/2018
  * Time: 7:57 PM
- * Version:
- * Description:
+ * Version: 1.0
+ * Description: For owner to check if the all players have voted
  */
 
 require_once '../tools/CookieTools.php';
 require_once '../Service/GameService.class.php';
 require_once '../Entity/Room.class.php';
+require_once '../tools/PhpValidate.php';
 
 if(!empty($_POST['roomId'])){
     $roomId = $_POST['roomId'];
+    $roomId = checkSpecialChar($roomId);
 }
 if(!empty($_POST['playerNum'])){
     $playerNum = $_POST['playerNum'];
+    $playerNum = checkSpecialChar($playerNum);
 }
 $isSucc = 0;
 

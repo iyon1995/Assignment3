@@ -9,10 +9,12 @@
  */
 
 require_once '../tools/CookieTools.php';
+require_once '../tools/PhpValidate.php';
 
 $location = "";
 if(!empty($_POST['location'])){
     $location = $_POST['location'];
+    $location = checkSpecialChar($location);
 }
 $errno = 0;
 $isLegal = getCookieVal("userId");

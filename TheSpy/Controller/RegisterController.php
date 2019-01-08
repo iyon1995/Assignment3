@@ -7,19 +7,29 @@
  */
 
 require_once '../Service/UserService.class.php';
+require_once '../tools/PhpValidate.php';
 
 
 if(!empty($_POST["email"])){
     $email = $_POST["email"];
 }
-if(!empty($_POST["spassword"])){
-    $password = $_POST["spassword"];
+
+if(!empty($_POST["userName"])){
+    $userName = $_POST["userName"];
+}
+
+if(!empty($_POST["password"])){
+    $password = $_POST["password"];
 }
 
 
 $userService = new UserService();
-$userService -> register($email,$email,$password);
+$isSucc = $userService -> register($email,$userName,$password);
 
-header("Location: ../Login.html");
-exit();
+if($isSucc != 1){
+    echo '{"errMess":"This email has already been registered"}';
+}else{
+    echo '{"errMess":""}';
+}
+
 

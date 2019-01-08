@@ -8,6 +8,7 @@
 
 require_once '../Service/RoomService.class.php';
 require_once '../Entity/Room.class.php';
+require_once '../tools/PhpValidate.php';
 
 //file_put_contents("../log/ajaxTest.txt","echo " ." hh "."\r\n",FILE_APPEND);
 

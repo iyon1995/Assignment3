@@ -6,7 +6,7 @@
  * Date: 12/23/2018
  * Time: 5:03 PM
  * Version:1.0
- * Description:
+ * Description: Process affair relate to User
  */
 require_once '../Entity/User.class.php';
 require_once '../DAO/DataProcessor.class.php';
@@ -14,9 +14,10 @@ require_once '../DAO/DataProcessor.class.php';
 class UserService
 {
     /**
-     * check if user is a legal user
+     * Check if user is a legal user
      * @param $userId
      * @param $password
+     * @return isSucc
      */
     public function loginService($userId,$password){
         $user = new User($userId,$password);
@@ -31,16 +32,50 @@ class UserService
         return $isSucc;
     }
 
-
+    /**
+     * Register an account
+     * @param $userId
+     * @param $userName
+     * @param $password
+     */
     public function register($userId,$userName,$password){
-        $user = new User($userId,$userName,$password,"S");
-        $sql = "insert into T_USER_MDL (ID,USER_NAME,PASSWORD,STATUS) values(?,?,md5(?),?);";
+        $isUni = $this -> uniqueEmail();
+        if($isUni == 1){
+            $user = new User($userId,$userName,$password,"S");
+            $sql = "insert into T_USER_MDL (ID,USER_NAME,PASSWORD,STATUS) values(?,?,md5(?),?);";
+            $dao = new DataProcessor();
+            $dao -> register($sql,$user);
+            $dao -> conn_close();
+            $isSucc = 1;
+        }else{
+            $isSucc = 0;
+        }
+        return $isSucc;
+    }
+
+    /**
+     * Check if the email has been registered
+     * @param $userId
+     */
+    public function uniqueEmail($userId){
+        $sql = "select t.id from T_USER_MDL t where t.ID = ?";
         $dao = new DataProcessor();
-        $dao -> register($sql,$user);
+        $id = $dao -> uniqueEmail($sql,$userId);
         $dao -> conn_close();
+        if($id != ""){
+            $isUni = 0;
+        }else{
+            $isUni = 1;
+        }
+        return $isUni;
     }
 
 
+    /**
+     * Get detail information of users
+     * @param $players
+     * @return array
+     */
     function getPlatersInfo($players){
         $sql = "select t.USER_NAME,t.LEVEL,t.G_ROUND,t.GW_ROUND,t.GWS_ROUND from T_USER_MDL t where t.ID = ?;";
         $dataProcessor = new DataProcessor();
@@ -53,6 +88,12 @@ class UserService
         return $users;
     }
 
+
+    /**
+     * Modify the level of the User
+     * @param $userId
+     * @param $exp
+     */
     public function setExp($userId,$exp){
         $sql = "update T_USER_MDL set LEVEL = LEVEL + ? where ID = ?";
         $dataProcessor = new DataProcessor();
@@ -60,6 +101,12 @@ class UserService
         $dataProcessor -> conn_close();
     }
 
+    /**
+     * Summary data of user in one game
+     * @param $userId
+     * @param $exp
+     * @param $result
+     */
     public function settleAccounts($userId,$exp,$result){
         $sql = "update T_USER_MDL set LEVEL = LEVEL + ?,G_ROUND = G_ROUND + 1,GW_ROUND = GW_ROUND + ?,GWS_ROUND = GWS_ROUND + ? where ID = ?";
         $dataProcessor = new DataProcessor();

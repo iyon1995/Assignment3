@@ -9,6 +9,7 @@
  */
 require_once '../tools/CookieTools.php';
 require_once '../Service/UserService.class.php';
+require_once '../tools/PhpValidate.php';
 
 if(!empty($_POST['isSpy'])){
     $isSpy = $_POST['isSpy'];

@@ -176,11 +176,9 @@
                             var words = "";
                             if (info_obj.isSpy == "S") {
                                 words += info_obj.sWord;
-                                $("assigned_word").innerHTML = info_obj.nWord;
                                 //$("other_word").value = info_obj.nWord;
                             } else {
                                 words += info_obj.nWord;
-                                $("assigned_word").innerHTML = info_obj.sWord;
                                 //$("other_word").value = info_obj.sWord;
                             }
                             if ($("is_reveal").innerHTML == "U") {
@@ -189,6 +187,7 @@
                                 }
                             }
                             $("identity").value = info_obj.isSpy;
+                            $("assigned_word").innerHTML = words;
                             //$("given_word").value = words;
                             $("stage").value = "D";
                             //$("game_area").removeAttribute("hidden");
@@ -223,6 +222,7 @@
                             $("stage").value = "A";
                             $("send_btn").removeAttribute("hidden");
                             $("user_input").removeAttribute("readonly");
+                            $("user_input").setAttribute("onkeydown","keySend(event)")
                             //$("talk_area").removeAttribute("hidden");
                         }else if($("myStatus").value == "D"){
                             $("stage").value = "A";
@@ -265,7 +265,7 @@
 
                             var formerText = displayBoard.innerHTML;
 
-                            var updateText = htmlDisplayMess(selfId,userName,content,date,imgPath);
+                            var updateText = htmlDisplayMess(selfId,userName,content,date,imgPath,"right");
 
                             var completeText = formerText + updateText;
                             displayBoard.innerHTML = completeText;
@@ -325,7 +325,7 @@
 
                             var content = "Now you can choose one player to Vote on the player list!!!";
 
-                            var updateText = htmlDisplayMess("system","@System",content,date,imgPath);
+                            var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
 
                             var completeText = formerText + updateText;
                             displayBoard.innerHTML = completeText;
@@ -365,7 +365,7 @@
                             var content = info_obj[i].content;
                             var userName = $("plst_name_" + userId).innerHTML;
 
-                            var updateText = htmlDisplayMess(userId,userName,content,date,imgPath);
+                            var updateText = htmlDisplayMess(userId,userName,content,date,imgPath,"left");
 
                             var completeText = formerText + updateText;
                             displayBoard.innerHTML = completeText;
@@ -387,7 +387,7 @@
                         }
                     }
                 }
-            }
+            };
             HttpXmlObject.send(data);
         }
     }
@@ -473,6 +473,7 @@
                         var dead = results[0];
                         var identity = results[1];
                         var isWin = results[2];
+                        var isSpy = $("identity").value;
                         if(dead == "NONE"){
                             var content = "No one die tonight.";
                         }else{
@@ -481,7 +482,6 @@
                             if(dead == $("myStatus").name){
                                 $("myStatus").value = "D";
                             }
-                            var isSpy = $("identity").value;
                             var content = dead + " is dead";
                             if($("is_reveal").innerHTML == "U"){
                                 content += " He/she is " + identity + ".";
@@ -500,19 +500,12 @@
                         var date = getDate();
                         var displayBoard = $("display_board");
                         var formerText = displayBoard.innerHTML;
-                        updateText = htmlDisplayMess("system","@System",content,date,imgPath);
+                        updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
                         var completeText = formerText + updateText;
                         displayBoard.innerHTML = completeText;
                         displayBoard.scrollTop = displayBoard.scrollHeight;
                         $("stage").value = info_obj.status;
 
-                        /*var mess = "sys";
-                        mess += " ( " + date + " ) :\r\n";
-                        mess += "&#09;" + content + "\r\n";
-                        var chatBox = $("chat_box").innerHTML;
-                        chatBox += mess;
-                        $("chat_box").innerHTML = chatBox;
-                        $("chat_box").scrollTop = $("chat_box").scrollHeight;*/
                     }
                 }
             };
@@ -534,6 +527,7 @@
         } else if (gameStage == "A") {
             doGetMess();
             canVote();
+            doGetMess();
         } else if(gameStage == "V"){
             allVoted();
         } else if(gameStage == "R"){
@@ -543,7 +537,6 @@
 
 
     function keySend(event) {
-        //alert("asda");
         var key = event.code;
         if(key == "Enter"){
             sendMess();
@@ -574,9 +567,9 @@
 </div>
 <div id="size">
     <div id="global_status" hidden>
-        <input type="test" id="stage" value="">
-        <input type="test" id="myStatus" value="A">
-        <input type="test" id="identity" value="">
+        <input type="text" id="stage" value="">
+        <input type="text" id="myStatus" value="A">
+        <input type="text" id="identity" value="">
         <table>
             <tr>
                 <th>Room ID</th>

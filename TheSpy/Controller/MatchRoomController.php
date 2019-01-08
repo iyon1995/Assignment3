@@ -9,6 +9,7 @@
  */
 
 require_once '../Service/RoomService.class.php';
+require_once '../tools/PhpValidate.php';
 
 $roomService = new RoomService();
 $roomId = $roomService -> matchRoom();

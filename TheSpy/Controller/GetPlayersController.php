@@ -4,14 +4,17 @@
  * Author: rui.song
  * Date: 12/26/2018
  * Time: 5:04 PM
- * Version:
- * Description:
+ * Version: 1.0
+ * Description: Get information of the room
  */
 require_once '../Service/RoomService.class.php';
 require_once '../Service/UserService.class.php';
 require_once '../Entity/User.class.php';
+require_once '../tools/PhpValidate.php';
+
 if(!empty($_POST['roomId'])){
     $roomId = $_POST['roomId'];
+    $roomId = checkSpecialChar($roomId);
 }
 $roomService = new RoomService();
 $players = $roomService -> getPlayers($roomId);

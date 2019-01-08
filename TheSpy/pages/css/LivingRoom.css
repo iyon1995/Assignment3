@@ -1,0 +1,66 @@
+body {
+    margin: 8px;
+}
+
+.mainholder {
+    background-color: #9E8459;
+    float: left;
+    max-height: 50%;
+
+}
+
+#pic {
+    max-width: 50%;
+    float: left;
+
+}
+
+.subholder {
+    float: right;
+    /*width: 44%;*/
+
+    /* background-color:#5E5489; */
+    margin: 2em;
+
+}
+img{
+    float: left;
+}
+
+.buttons{
+    float: left;
+}
+
+#iframe {
+    position: absolute;
+    right: 2%;
+    top: 35%;
+    height: 40%;
+}
+
+.btn.btn-default.btn-lg{
+    background: transparent;
+}
+
+.btn.btn-default.btn-lg:hover{
+    background: #D7BB77;
+}
+
+/*p{*/
+/*font-size: 0.85em;*/
+/*}*/
+
+#room_id_password {
+    position: absolute;
+    top: 112px;
+    right: 90px;
+}
+
+.btn.btn-link{
+    float: right;
+    /*font-color:black;*/
+}
+
+/*.btn-link{*/
+    /*color:black;*/
+/*}*/

@@ -29,6 +29,11 @@ class DataProcessor{
         $this -> conn -> query("set names utf8");
     }
 
+    /**
+     * Execute query sql without param
+     * @param $sql
+     * @return bool|mysqli_result
+     */
     public function execute_dql($sql){
 
         $res = $this -> conn -> query($sql) or die ("sql".$this -> conn -> error);
@@ -36,6 +41,11 @@ class DataProcessor{
         return $res;
     }
 
+    /**
+     * Execute insert update delete drop create sql without param
+     * @param $sql
+     * @return string
+     */
     public function execute_dml($sql){
         $res = $this -> conn -> query($sql) or die ("sql".$this -> conn -> error);
 
@@ -51,6 +61,12 @@ class DataProcessor{
 
     }
 
+    /**
+     * Check user login
+     * @param $sql
+     * @param $user
+     * @return mixed
+     */
     public function checkLogin($sql,$user){
         $sql_stmt = $this -> conn -> prepare($sql);
         $id = $user -> getUserId();
@@ -72,6 +88,12 @@ class DataProcessor{
     }
 
 
+    /**
+     * Register user an account
+     * @param $sql
+     * @param $user
+     * @return int
+     */
     public function register($sql,$user){
         $sql_stmt = $this -> conn -> prepare($sql);
         $userId = $user -> getUserId();
@@ -87,6 +109,12 @@ class DataProcessor{
     }
 
 
+    /**
+     * Assign a empty room or new room to User
+     * @param $sql
+     * @param $room
+     * @return int
+     */
     public function generateRoom($sql,$room){
 
         $sql_stmt = $this -> conn -> prepare($sql);
@@ -112,6 +140,12 @@ class DataProcessor{
         return $isSucc;
     }
 
+    /**
+     * Get information of room
+     * @param $sql
+     * @param $getRoomInfoBy
+     * @return Room
+     */
     public function getRoomInfo($sql,$getRoomInfoBy){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("si",$getRoomInfoBy,$getRoomInfoBy);
@@ -126,6 +160,12 @@ class DataProcessor{
 
     }
 
+    /**
+     * Search room by id
+     * @param $sql
+     * @param $roomId
+     * @return Room
+     */
     public function searchRoom($sql,$roomId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("i",$roomId);
@@ -140,6 +180,13 @@ class DataProcessor{
 
     }
 
+    /**
+     * Check whether the room is full
+     * @param $sqlM
+     * @param $sqlC
+     * @param $roomId
+     * @return int
+     */
     public function isFull($sqlM,$sqlC,$roomId){
         $sql_stmt = $this -> conn -> prepare($sqlM);
         $sql_stmt -> bind_param("s",$roomId);
@@ -164,6 +211,13 @@ class DataProcessor{
         return $diff;
     }
 
+    /**
+     * Join in the game
+     * @param $sql
+     * @param $roomId
+     * @param $userId
+     * @return int
+     */
     public function joinGame($sql,$roomId,$userId){
 
         $sql_stmt = $this -> conn -> prepare($sql);
@@ -175,6 +229,11 @@ class DataProcessor{
         return $isSucc;
     }
 
+    /**
+     * Get players id of a room
+     * @param $sql
+     * @return array
+     */
     public function getPlayers($sql){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_result($playerId);
@@ -188,6 +247,12 @@ class DataProcessor{
         return $players;
     }
 
+    /**
+     * Get a pair of word by id
+     * @param $sql
+     * @param $wordId
+     * @return array
+     */
     public function getWords($sql,$wordId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("i",$wordId);
@@ -204,6 +269,12 @@ class DataProcessor{
         return $words;
     }
 
+    /**
+     * Get a pair of word from dictionary
+     * @param $sql
+     * @param $difficulty
+     * @return mixed
+     */
     public function chooseWord($sql,$difficulty){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("s",$difficulty);
@@ -217,6 +288,12 @@ class DataProcessor{
         return $wordId;
     }
 
+    /**
+     * Assign spy to a user
+     * @param $sql
+     * @param $spyId
+     * @return int
+     */
     public function setSpy($sql,$spyId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("i",$spyId);
@@ -227,6 +304,13 @@ class DataProcessor{
         return $isSucc;
     }
 
+    /**
+     * Set game flag as "S" start
+     * @param $sql
+     * @param $roomId
+     * @param $wordId
+     * @return int
+     */
     public function iniGame($sql,$roomId,$wordId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("ii",$wordId,$roomId);
@@ -237,6 +321,12 @@ class DataProcessor{
         return $isSucc;
     }
 
+    /**
+     * Choose a player to start to speak
+     * @param $startId
+     * @param $sql
+     * @return int
+     */
     function choosePlayerToStart($startId,$sql){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("i",$startId);
@@ -247,6 +337,12 @@ class DataProcessor{
         return $isSucc;
     }
 
+    /**
+     * Get status of a room
+     * @param $sql
+     * @param $roomId
+     * @return array
+     */
     function getRoomStatus($sql,$roomId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("i",$roomId);
@@ -261,6 +357,12 @@ class DataProcessor{
     }
 
 
+    /**
+     * For players to ask if himself is dead
+     * @param $sql
+     * @param $userId
+     * @return mixed
+     */
     function amISpy($sql,$userId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("s",$userId);
@@ -273,6 +375,24 @@ class DataProcessor{
         }
     }
 
+    function uniqueEmail($sql,$userId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("s",$userId);
+        $sql_stmt -> bind_result($id);
+        $sql_stmt->execute();
+        while($sql_stmt -> fetch()){
+            $sql_stmt -> free_result();
+            $sql_stmt -> close();
+            return $id;
+        }
+    }
+
+    /**
+     * For players to ask if himself is dead
+     * @param $sql
+     * @param $userId
+     * @return mixed
+     */
     function canISpeak($sql,$userId){
         $sql_stmt = $this -> conn -> prepare($sql);
         $sql_stmt -> bind_param("s",$userId);

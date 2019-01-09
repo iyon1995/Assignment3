@@ -539,6 +539,7 @@
                         var identity = results[1];
                         var isWin = results[2];
                         var isSpy = $("identity").value;
+                        var stage = info_obj.status;
                         if(dead == "NONE"){
                             var content = "No one die tonight.";
                         }else{
@@ -555,10 +556,13 @@
                         if(isWin == "T"){
                             content += " Next Round!!"
                         }else{
+                            stage = "E";
                             if(isWin == isSpy){
                                 content += " You are the winner!!";
+                                $("result").value = "W";
                             }else{
                                 content += " You lose!";
+                                $("result").value = "L";
                             }
                         }
                         var imgPath = "pic/welcome.jpg";
@@ -569,7 +573,7 @@
                         var completeText = formerText + updateText;
                         displayBoard.innerHTML = completeText;
                         displayBoard.scrollTop = displayBoard.scrollHeight;
-                        $("stage").value = info_obj.status;
+                        $("stage").value = stage;
 
                     }
                 }
@@ -582,6 +586,9 @@
      * left room
      */
     function leftRoom(){
+        var mess = "Please do not leave the room during the game. This may cause inconvenience to other players. " +
+            "Additionally it will cause punishment to yourself as well!!";
+        window.confirm(mess);
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
             var url = "../Controller/LeftRoomController.php";
@@ -589,6 +596,7 @@
             var roomId = $("room_id").innerHTML;
             if (roomId != "") {
                 data = "roomId=" + roomId;
+                alert(data);
             }
             HttpXmlObject.open("post", url, true);
             HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -596,8 +604,8 @@
                 if (HttpXmlObject.readyState == 4) {
                     if (HttpXmlObject.status == 200) {
                         var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
                         // TODO
+                        window.location.href = "livingRoom.html";
                     }
                 }
             }
@@ -617,6 +625,7 @@
             var isWin = $("result").value;
             if (isSpy != "" && isWin != "") {
                 data = "isSpy=" + isSpy + "&isWin=" + isWin;
+                //alert(data);
             }
             HttpXmlObject.open("post", url, true);
             HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -624,12 +633,13 @@
                 if (HttpXmlObject.readyState == 4) {
                     if (HttpXmlObject.status == 200) {
                         var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        // TODO if else
-                        alert("game is over");
+                        if(info ==  "E"){
+                            alert("game is over. Now jump to Living Room");
+                            window.location.href = "livingRoom.html";
+                        }
                     }
                 }
-            }
+            };
             HttpXmlObject.send(data);
         }
     }
@@ -655,11 +665,12 @@
                         var info_obj = eval("(" + info + ")");
                         var status = info_obj.status;
                         if(status == "N"){
+                            alert(status);
                             $("stage").value = "E";
                         }
                     }
                 }
-            }
+            };
             HttpXmlObject.send(data);
         }
     }
@@ -744,7 +755,7 @@
 </script>
 </head>
 
-<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber')" onbeforeunload="leavingMess(event)">
+<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber')" >
 <div id="size">
     <!--=====================================================================================================================-->
     <!--=====================================================================================================================-->
@@ -753,6 +764,7 @@
         <input type="text" id="stage" value="">
         <input type="text" id="myStatus" value="A">
         <input type="text" id="identity" value="">
+        <input type="test" id="result" value="I">
         <table>
             <tr>
                 <th>Room ID</th>

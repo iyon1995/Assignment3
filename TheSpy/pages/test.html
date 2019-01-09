@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<body onbeforeunload="aaa()">
-<script type="javascript">
-    window.onunload=function(event){
-        /*var e = window.event||e;
-        e.returnValue=false;
-        aaa();*/
-        event.returnValue = false;
-    };
-
-    /*window.onunload=function(){
-        aaa();
-    }*/
-
+<body onload="aaa()">
+<script type="text/javascript">
     function aaa(){
-        alert("aaa");
+        setTimeout(function(){
+            if(document.getElementById("aaa").getAttribute("hidden") == null){
+                bbb();
+            }
+        },5000);
+    }
+    function bbb(){
+        var content = document.getElementById("asd").value;
+        alert(content);
+        document.getElementById("aaa").setAttribute("hidden","");
     }
 </script>
-
+<textarea id="asd"></textarea>
+<input type="button" onclick="bbb()" id="aaa" value="submit">
 </body>
 </html>

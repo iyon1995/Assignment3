@@ -6,33 +6,8 @@
 <link id="link" rel="stylesheet" href="pages/css/welcome.css">
 <title>The Spy</title>
 <script type="text/javascript" src="js/tools.js"></script>
+<script type="text/javascript" src="js/validate.js"></script>
 <script type="text/javascript">
-    function checkEmail() {
-        var email = document.getElementById("email");
-        var regExp = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
-        var errMess = "";
-        if (email.value == "") {
-            errMess = "please input email address!";
-        }else if(!regExp.test(email.value)){
-            errMess = "the email address is not valid!";
-        }
-        return errMess;
-    }
-
-
-    function comparePassword() {
-        var fpassword = document.getElementById("fpassword").value;
-        var spassword = document.getElementById("spassword").value;
-        var errMess = "";
-        if(fpassword == ""){
-            errMess = "the passwords can not be empty!";
-        }else if(fpassword.length < 8 || fpassword.length > 16){
-            errMess = "the length of passwords must be from 8 to 16";
-        }else if(fpassword != spassword){
-            errMess = "the passwords are not the same!";
-        }
-        return errMess;
-    }
 
     function doRegister(){
         var userId = $("email").value;
@@ -100,7 +75,7 @@
     <div class="subholder">
         <!--<p style="font-size:1.9em">Start the Game </p>-->
 
-        <p style="font-size:1.7em">registe with your Email address</p>
+        <p style="font-size:1.7em">register with your Email address</p>
         <table>
             <form class="registform" action="Controller/RegisterController.php" method="post">
             </form>

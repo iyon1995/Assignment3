@@ -9,13 +9,11 @@
         var email = document.getElementById("email");
         if(email.value == null || email.value == ""){
                 alert("please input email address!");
-                //email.focus();
                 return;
             }
         var regExp = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
         if(!regExp.test(email.value)){
                 alert("the email address is not valid!");
-              //  email.focus();
                 return;
                 }
             }

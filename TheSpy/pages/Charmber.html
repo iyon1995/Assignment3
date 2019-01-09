@@ -9,7 +9,9 @@
 <script type="text/javascript" src="../js/tools.js"></script>
 <script type="text/javascript">
 
-
+    /**
+     * set the initial size of the page
+     */
     function setSize(){
       var height = window.innerHeight + "px";
       var width = window.innerWidth + "px";
@@ -22,7 +24,9 @@
       $("size").style.height = ""+height+"";
     }
 
-
+    /**
+     * get room information
+     */
     function getRoomInfo() {
         var HttpXmlObject = getXmlHttpObject();
         var roomId = getRequestFromUrl("roomId");
@@ -67,7 +71,10 @@
         }
     }
 
-
+    /**
+     * 1.get player list of the room
+     * 2.get user information
+     */
     function getPlayerList() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -122,7 +129,9 @@
         }
     }
 
-
+    /**
+     * initial game
+     */
     function iniGame() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -155,7 +164,9 @@
         }
     }
 
-
+    /**
+     * determine whether the game is start
+     */
     function isStart() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -201,7 +212,9 @@
         }
     }
 
-
+    /**
+     * determine whether the player can speak
+     */
     function canISpeak() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -222,26 +235,45 @@
                             $("stage").value = "A";
                             $("send_btn").removeAttribute("hidden");
                             $("user_input").removeAttribute("readonly");
-                            $("user_input").setAttribute("onkeydown","keySend(event)")
+                            $("user_input").setAttribute("onkeydown","keySend(event)");
+
+                            var imgPath = "pic/welcome.jpg";
+                            var date = getDate();
+                            var displayBoard = $("display_board");
+                            var formerText = displayBoard.innerHTML;
+                            var content = "Now you have 1 min to describe the word you get!!!";
+                            var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
+
+                            var completeText = formerText + updateText;
+                            displayBoard.innerHTML = completeText;
+
                             //$("talk_area").removeAttribute("hidden");
+                            timeoutEdit();
                         }else if($("myStatus").value == "D"){
                             $("stage").value = "A";
                         }
                     }
                 }
-            }
+            };
             HttpXmlObject.send(data);
         }
     }
 
-
-    function sendMess() {
+    /**
+     * 1.send message
+     * 2.over 1 min send message automatically
+     * @param timeout
+     */
+    function sendMess(timeout) {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
             var url = "../Controller/SendMessageController.php";
             var data = "";
             var roomId = $("room_id").innerHTML;
             var content = $("user_input").value;
+            if(timeout == 1){
+                content += "(timeout)";
+            }
             content = content.trim();
             if (roomId != "") {
                 data = "roomId=" + roomId + "&content=" + content;
@@ -289,7 +321,10 @@
         }
     }
 
-
+    /**
+     * 1.determine whether the player can vote
+     * 2.over 1 min vote himself automatically
+     */
     function canVote() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -323,12 +358,13 @@
 
                             var formerText = displayBoard.innerHTML;
 
-                            var content = "Now you can choose one player to Vote on the player list!!!";
+                            var content = "Now you have 1 min to choose one player to Vote on the player list!!!";
 
                             var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
 
                             var completeText = formerText + updateText;
                             displayBoard.innerHTML = completeText;
+                            timeoutVote();
                         }
                     }
                 }
@@ -337,7 +373,9 @@
         }
     }
 
-
+    /**
+     * get message
+     */
     function doGetMess() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -370,9 +408,9 @@
                             var completeText = formerText + updateText;
                             displayBoard.innerHTML = completeText;
                             displayBoard.scrollTop = displayBoard.scrollHeight;
-                            var meId = info_obj[0].receiver;
+                            var myId = info_obj[0].receiver;
                             var myStatus = $("myStatus");
-                            myStatus.setAttribute("name",meId);
+                            myStatus.setAttribute("name",myId);
 
                             /*var message = info_obj[i].sender + " (" + info_obj[i].sendTime + ") : \r\n";
                             message += "&#09;" + info_obj[i].content + "\r\n";
@@ -394,7 +432,7 @@
 
 
     /**
-     *
+     * vote player
      * @param candidate
      */
     function doVote(candidate) {
@@ -418,6 +456,7 @@
                         var activePlayerList = document.getElementsByName("active_player");
                         for(var i=0; i < activePlayerList.length; i++){
                             activePlayerList[i].setAttribute("class","default");
+                            activePlayerList[i].removeAttribute("onclick");
                         }
                     }
                 }
@@ -426,6 +465,9 @@
         }
     }
 
+    /**
+     * determine whether all players have already voted
+     */
     function allVoted(){
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -451,7 +493,9 @@
         }
     }
 
-
+    /**
+     * get the result of the game
+     */
     function doGetResult() {
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -513,8 +557,129 @@
         }
     }
 
+    /**
+     * left room
+     */
+    function leftRoom(){
+        var HttpXmlObject = getXmlHttpObject();
+        if (HttpXmlObject) {
+            var url = "../Controller/LeftRoomController.php";
+            var data = "";
+            var roomId = $("room_id").innerHTML;
+            if (roomId != "") {
+                data = "roomId=" + roomId;
+            }
+            HttpXmlObject.open("post", url, true);
+            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            HttpXmlObject.onreadystatechange = function () {
+                if (HttpXmlObject.readyState == 4) {
+                    if (HttpXmlObject.status == 200) {
+                        var info = HttpXmlObject.responseText;
+                        var info_obj = eval("(" + info + ")");
+                        // TODO
+                    }
+                }
+            }
+            HttpXmlObject.send(data);
+        }
+    }
+
+    /**
+     * calculate the data of user's account
+     */
+    function doSettleAccounts(){
+        var HttpXmlObject = getXmlHttpObject();
+        if (HttpXmlObject) {
+            var url = "../Controller/SettleAccountsController.php";
+            var data = "";
+            var isSpy = $("identity").value;
+            var isWin = $("result").value;
+            if (isSpy != "" && isWin != "") {
+                data = "isSpy=" + isSpy + "&isWin=" + isWin;
+            }
+            HttpXmlObject.open("post", url, true);
+            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            HttpXmlObject.onreadystatechange = function () {
+                if (HttpXmlObject.readyState == 4) {
+                    if (HttpXmlObject.status == 200) {
+                        var info = HttpXmlObject.responseText;
+                        var info_obj = eval("(" + info + ")");
+                        // TODO
+                    }
+                }
+            }
+            HttpXmlObject.send(data);
+        }
+    }
+
+    /**
+     * determine whether the game is finish
+     */
+    function isEnd(){
+        var HttpXmlObject = getXmlHttpObject();
+        if (HttpXmlObject) {
+            var url = "../Controller/IsEndController.php";
+            var data = "";
+            var roomId = $("room_id").innerHTML;
+            if (roomId != "") {
+                data = "roomId=" + roomId;
+            }
+            HttpXmlObject.open("post", url, true);
+            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            HttpXmlObject.onreadystatechange = function () {
+                if (HttpXmlObject.readyState == 4) {
+                    if (HttpXmlObject.status == 200) {
+                        var info = HttpXmlObject.responseText;
+                        var info_obj = eval("(" + info + ")");
+                        var status = info_obj.status;
+                        if(status == "N"){
+                            $("stage").value = "E";
+                        }
+                    }
+                }
+            }
+            HttpXmlObject.send(data);
+        }
+    }
+
+    /**
+     * over 1 min send message automatically
+     */
+    function timeoutEdit(){
+        setTimeout(function(){
+            if($("send_btn").getAttribute("hidden") == null){
+                sendMess(1);
+            }
+        },1000 * 60);
+    }
+
+    /**
+     * over 1 min vote himself automatically
+     */
+    function timeoutVote(){
+        setTimeout(function(){
+            var hasVoted = 0;
+            var activePlayerList = document.getElementsByName("active_player");
+            for (var i = 0; i < activePlayerList.length; i++) {
+                if(activePlayerList[i].getAttribute("onclick") != null){
+                    hasVoted = 1;
+                    break;
+                }
+            }
+            if(hasVoted != 0){
+                var myStatus = $("myStatus");
+                var candidate = myStatus.name;
+                doVote(candidate);
+            }
+        },1000 * 60);
+    }
+
+    //call dispatcher to send request
     window.setInterval("dispatcher()", 5000);
 
+    /**
+     * dispatch functions according to the stage
+     */
     function dispatcher() {
         var gameStage = $("stage").value;
         if (gameStage == "I") {
@@ -535,15 +700,20 @@
         }
     }
 
-
+    /**
+     * send message by press enter
+     * @param event
+     */
     function keySend(event) {
         var key = event.code;
         if(key == "Enter"){
-            sendMess();
+            sendMess(0);
         }
     }
+
 </script>
 </head>
+
 <body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber')">
 <div id="help_menu">
       <div id="ensconce">
@@ -631,7 +801,7 @@
             </div>
             <div class="text">
                 <textarea id="user_input" name="textarea" rows="8" cols="80" onkeydown="keySend(event)" readonly="readonly"></textarea>
-                <input hidden type="button" id="send_btn" onclick="sendMess()" value="send(Enter)">
+                <input hidden type="button" id="send_btn" onclick="sendMess(0)" value="send(Enter)">
             </div>
             <!--<input hidden type="button" id="send_btn" onclick="sendMess()" value="send">-->
         </div>
@@ -639,23 +809,5 @@
 
 </div>
 </body>
-<!--<body onload="getRoomInfo()">
 
-
-<br/>
-<input type="button" id="start_game" hidden value="start game" onclick="iniGame()">
-<input type="button" id="next_round" hidden value="next round" onclick="iniGame()">
-<div id="vote">
-
-</div>
-<div id="game_area" hidden>
-    word:<input type="text" id="given_word" value="">
-    <input type="hidden" id="other_word" value=""><br/><br/>
-    <textarea cols="40" rows="10" id="chat_box"></textarea><br/><br/>
-    <div id="talk_area" hidden>
-        <input type="text" id="content" name="content" value="">
-        <input type="button" value="send" onclick="sendMess()"/>
-    </div>
-</div>
-</body>-->
 </html>

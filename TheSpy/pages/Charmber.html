@@ -10,6 +10,26 @@
 <script type="text/javascript">
 
     /**
+     * show some words
+     * */
+    function showWordsTopRight(){
+        //$("some_words").removeAttribute("hidden");
+    }
+    /**
+     * hide rule
+     * */
+    function hideRule(){
+        //$("help_menu").setAttribute("hidden","");
+        var havBar = $("navBox");
+        if(havBar.getAttribute("hidden") == null){
+            havBar.setAttribute("hidden","");
+        }else{
+            havBar.removeAttribute("hidden");
+        }
+
+    }
+
+    /**
      * set the initial size of the page
      */
     function setSize(){
@@ -45,6 +65,7 @@
                     if (HttpXmlObject.status == 200) {
                         var info = HttpXmlObject.responseText;
                         var info_obj = eval("(" + info + ")");
+                        $("display_roomId").innerHTML = "Room : " + info_obj.roomId;
                         $("room_id").innerHTML = info_obj.roomId;
                         $("room_type").innerHTML = info_obj.roomTpye;
                         $("player_num").innerHTML = info_obj.playerNum;
@@ -95,7 +116,7 @@
                         for (var i = 0; i < info_obj.length; i++) {
                             if(i == 0){
                                 $("owner_id").innerHTML = info_obj[0].userId;
-                                $("owner_name").innerHTML = info_obj[0].userName;
+                                //$("owner_name").innerHTML = info_obj[0].userName;
                             }
 
                             var img = "pic/welcome.JPG";
@@ -184,7 +205,7 @@
                         var info = HttpXmlObject.responseText;
                         var info_obj = eval("(" + info + ")");
                         if (info_obj.status == "D") {
-                            var words = "";
+                            var words = "Your word is:";
                             if (info_obj.isSpy == "S") {
                                 words += info_obj.sWord;
                                 //$("other_word").value = info_obj.nWord;
@@ -194,7 +215,7 @@
                             }
                             if ($("is_reveal").innerHTML == "U") {
                                 if(info_obj.isSpy == "S"){
-                                    words += "(you are the spy!)";
+                                    words += "<br/>(you are the spy!)";
                                 }
                             }
                             $("identity").value = info_obj.isSpy;
@@ -604,7 +625,8 @@
                     if (HttpXmlObject.status == 200) {
                         var info = HttpXmlObject.responseText;
                         var info_obj = eval("(" + info + ")");
-                        // TODO
+                        // TODO if else
+                        alert("game is over");
                     }
                 }
             }
@@ -681,6 +703,7 @@
      * dispatch functions according to the stage
      */
     function dispatcher() {
+        isEnd();
         var gameStage = $("stage").value;
         if (gameStage == "I") {
             getPlayerList();
@@ -697,6 +720,8 @@
             allVoted();
         } else if(gameStage == "R"){
             doGetResult();
+        } else if(gameStage == "E"){
+            doSettleAccounts();
         }
     }
 
@@ -711,31 +736,19 @@
         }
     }
 
+    function leavingMess(event){
+        return "Please do not leave the room during the game. This may cause inconvenience to other players. " +
+            "Additionally it will cause punishment to yourself as well!!";
+    }
+
 </script>
 </head>
 
-<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber')">
-<div id="help_menu">
-      <div id="ensconce">
-              <img id="help_img" src="pic/help.png" alt="">
-      </div>
-      <div id="open">
-          <div class="navH">
-            <h4> The game rules</h4>
-              <span><img class="obscure" src="pic/obscure.png" alt=""></span>
-          </div>
-          <div class="navBox">
-              <ul>
-                  <li>Every one will</li>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-              </ul>
-          </div>
-      </div>
-</div>
+<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber')" onbeforeunload="leavingMess(event)">
 <div id="size">
+    <!--=====================================================================================================================-->
+    <!--=====================================================================================================================-->
+
     <div id="global_status" hidden>
         <input type="text" id="stage" value="">
         <input type="text" id="myStatus" value="A">
@@ -764,12 +777,16 @@
         </table>
     </div>
 
+    <!--=====================================================================================================================-->
+    <!--=====================================================================================================================-->
+
     <div id="app">
         <div class="sidebar">
             <div class="card">
                 <div class="header">
                     <img id="room_owner" src="pic/welcome.JPG" alt="">
-                    <p id="owner_name">@owner</p>
+                    <p id="display_roomId">roomId</p>
+                    <!--<p id="owner_name" hidden>@owner</p>-->
                     <p id="owner_id" hidden>@owner</p>
                     <div class="owner_control" hidden id="owner_control">
                         <input type="button" name="button" class="btn btn-link" value="StartGame" id="start_game" onclick="iniGame()">
@@ -807,7 +824,43 @@
         </div>
     </div>
 
+    <!--=====================================================================================================================-->
+    <!--=====================================================================================================================-->
+
+
 </div>
+<div class="leave_charmber">
+    <button type="button" name="button" id="leave_charmber" onmouseover="showWordsTopRight()" onclick="leftRoom()">Leave Room</button>
+    <font id="some_words" hidden>Hello,@wxy please do not leave</font>
+</div>
+
+
+<div id="help_menu">
+
+
+        <div class="navH">
+        <img class="obscure" src="pic/obscure.png" width="30%" alt="" onclick="hideRule()">
+        <b style="font-size:1.4em; float: right; margin-right: 35%">Game rules</b>
+    </div>
+    <div id="navBox" class="navBox">
+        <ol>
+            <li>Everyone will be assigned with one word.</li>
+            <li>One person among they will get a different word.</li>
+            <li>Every should describe the word he or she gets.</li>
+            <li>The same description should be avoided.</li>
+            <li>Voting will be followed after discuss.</li>
+            <li>Press the player in the left player list.</li>
+            <li>Once the spy is found,the game is over.</li>
+            <li>After four round of discuss,if the spy is still alive,he or she wins.</li>
+        </ol>
+    </div>
+</div>
+
+<footer>
+    <!--<font>Who is the spy GAME</font><br>-->
+    <font>provided and supported by: Rui.Song Xiyuan.Wang Xiaoan.Sun</font><br>
+    <!--<font>content us by email:</font><br>-->
+</footer>
 </body>
 
 </html>

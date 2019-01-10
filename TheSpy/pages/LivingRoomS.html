@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" style="height: 100%; margin: 0">
 <head>
     <meta charset="utf-8">
     <meta name=”viewport” content=”width=device-width, initial-scale=1″>
@@ -16,7 +16,9 @@
             window.location.href = "NewRoom.html";
             // document.getElementById("iframe").height=0;
             // document.getElementById("iframe").height=document.getElementById("iframe").contentWindow.document.body.scrollHeight;
+
         }
+
         function doSearch() {
             var HttpXmlObject = getXmlHttpObject();
             var roomId = $("room_id").value;
@@ -59,6 +61,7 @@
             }
             return true;
         }
+
         function doMatch(){
             var HttpXmlObject = getXmlHttpObject();
             var roomId = $("room_id").value;
@@ -85,7 +88,9 @@
                 };
                 HttpXmlObject.send(data);
             }
+
         }
+
         function checkPassword() {
             var password = $("room_password_hides").value;
             var inputPassword = $("room_password").value;
@@ -97,14 +102,17 @@
                 alert("Password is wrong.");
             }
         }
+
         function showSearch() {
             $("room_id").removeAttribute("hidden");
             $("search_room").removeAttribute("hidden");
         }
+
+
     </script>
 
 </head>
-<body onload="checkIllegalLogin('LivingRoom')" style="margin: 8px;">
+<body onload="checkIllegalLogin('LivingRoom')" style="height: 104%; margin: 0">
 <div class="mainholder">
     <img id="pic" src="pic/bg_living.jpg" alt="">
     <div><button type="button" class="btn btn-link" style="color:black">logout</button></div>
@@ -146,21 +154,21 @@
             </tr>
         </table>
         <div hidden id="room_id_password">
-            <!--<table>
-                <tr>
-                    <td id="password_alter">Password needed</td>
-                    <td>
-                        <input id="input_password" type="password" id="room_password" value="">
-                        <input type="hidden" id="room_password_hides" value="">
-                        <input type="hidden" id="room_id_hides" value="">
-                    </td>
-                </tr>
-                <tr><td><input id="join_btn" type="button" value="join" onclick="checkPassword()"></td></tr>
-            </table>-->
         </div>
+        <!--<iframe id="iframe" src="RoomIns.html" frameborder="no" style="width: 50%;height: 50%"></iframe>-->
+        <!--<iframe id="iframe" src="UserInfo.html" frameborder="no" style="width: 50%;height: 50%"></iframe>-->
+    </div>
 
-        <iframe id="iframe" src="RoomIns.html" frameborder="no" style="width: 50%;height: 50%"></iframe>
-
+    <div id="nav_bar">
+        <div id="basic_info">
+            <table border="1px">
+                <tr><td>Email:</td><td>rui.song@stud.th-luebeck.de</td></tr>
+                <tr><td>User Name:</td><td>rui.song</td></tr>
+                <tr><td>Level:</td><td>3</td></tr>
+                <tr><td>winning percentage:</td><td> 15%</td></tr>
+            </table>
+        </div>
+        <div id="chart"></div>
     </div>
 
 </div>

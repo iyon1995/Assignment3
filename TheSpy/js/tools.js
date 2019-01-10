@@ -149,3 +149,15 @@ function htmlDisplayMess(userId,userName,content,time,imgPath,position){
 }
 
 
+function expConversion(exp){
+    var level= 10;
+    for(var i = 1;i <10;i++){
+        var rule = 2 ^ i;
+        if(rule > exp){
+            level = i;
+            break;
+        }
+    }
+    return level;
+}
+

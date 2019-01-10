@@ -16,7 +16,7 @@ body {
 }
 
 .subholder {
-    float: right;
+    float: left;
     /*width: 44%;*/
 
     /* background-color:#5E5489; */
@@ -62,5 +62,5 @@ img{
 }
 
 /*.btn-link{*/
-    /*color:black;*/
+/*color:black;*/
 /*}*/

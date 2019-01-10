@@ -1,61 +1,115 @@
-body{
-    background:url(../pic/bg.JPG) center no-repeat;
+body {
+    background: url(../pic/bg.JPG) center no-repeat;
     background-size: cover;
     font: 14px/1.4em 'Helvetica Neue', Helvetica, 'Microsoft Yahei', Arial, sans-serif;
 }
-*   {
+
+* {
     box-sizing: border-box;
 
 }
 
-#help_img{
+#help_img {
 
-  width: 60%;
+    width: 60%;
 
 }
 
-.self{
+.self {
     float: right;
     margin: 0 0 0 3%;
     border-radius: 3px;
-  }
-
-
-  
+}
 
 #help_menu {
-  overflow: hidden;
-  height: 100%;
-  float: left;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    overflow: hidden;
+    /*height: 100%;*/
+    width: 20%;
+    /*float: left;*/
+    /*-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;*/
+    /*background: url(../pic/3.JPG);*/
+    background-color: rgba(255, 255, 255, 0.5);
+    background-blend-mode: lighten;
+    /*margin: 3% auto;*/
+    margin-left: 10%;
+    padding-right: 2%;
+    float: right;
+    margin-top: 0.1%;
+    position: absolute;
+    top :7%;
+    right: 5%;
+
 }
 
 #ensconce {
 
-  width: 3rem;
-  height: 100%;
-  float: left;
-  text-align: center;
-  position: relative;
-  display: none;
+    width: 3rem;
+    height: 100%;
+    float: left;
+    text-align: center;
+    position: relative;
+    display: none;
 }
 
+/*.obscure {
+    width: 2%;
+    float: right;
+}*/
 .obscure{
-  width: 2%;
+    width: 15%;
+    margin-left: 8%;
+    padding-right: 8%;
+}
+.navH{
+    width: 120%;
+    background-color: rgba(0,0,0,0.3);
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+.navH:hover{
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+}
+
+#navBox{
+    margin-top: 5%;
+}
+
+#leave_charmber{
+
+    background:url(../pic/3.JPG);
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    outline: none;
+    float: right;
+}
+
+.leave_charmber{
+    position:absolute;
+    /* float: right; */
+    top: 2%;
+    right: 5%;
+    color: white;
+
 }
 
 #app {
-    margin: 2% auto;
+    margin: 3% 1.0% 1.0% 2%;
+    /*margin: 2% auto;*/
     width: 62.5%;
     height: 87%;
     overflow: hidden;
     border-radius: 3px;
+    position: absolute;
+    right: 27%;
 }
+
 .sidebar, .main {
     height: 100%;
 }
@@ -65,14 +119,16 @@ body{
     width: 29%;
     color: #f4f4f4;
     background-color: #2e3238;
-    border-left:1px solid #292c33;
+    border-left: 1px solid #292c33;
     /*  ?? need or not*/
 }
+
 .main {
     position: relative;
     overflow: hidden;
     background-color: #eee;
 }
+
 .text {
     position: absolute;
     width: 100%;
@@ -81,7 +137,7 @@ body{
     /*border: solid red 1px;*/
 }
 
-.card{
+.card {
     padding: 8% 8% 8% 8%;
     border-bottom: 1px solid #24272c;
 }
@@ -89,14 +145,15 @@ body{
 .message {
     padding: 3% 4%;
     overflow-y: scroll;
-    height:calc(100% - 160px);
+    height: calc(100% - 160px);
 }
 
 .main .text {
     height: 26%;
     border-top: 1px solid #ddd;
 }
-textarea{
+
+textarea {
     background-color: white;
     padding: 1%;
     height: 100%;
@@ -108,7 +165,7 @@ textarea{
 
 }
 
-#room_owner{
+#room_owner {
 
     width: 30%;
     height: 30%;
@@ -117,38 +174,45 @@ textarea{
 
 }
 
-#owner_name{
+/*#owner_name {
     display: inline-block;
     margin: 0 0 0 10%;
     font-size: 1.2em;
-    vertical-align:middle;
+    vertical-align: middle;
+}*/
+
+#display_roomId {
+    display: inline-block;
+    margin: 0 0 0 10%;
+    font-size: 1.2em;
+    vertical-align: middle;
 }
 
-.owner_control{
+
+.owner_control {
     padding: 2% 0;
 
 }
 
-.btn btn-link{
+.btn btn-link {
     display: inline-block;
     /* padding: 6px 2px; */
 
 }
 
-
-ul{
+ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.message li{
+.message li {
     margin-bottom: 3%;
     display: list-item;
     text-align: center;
 }
 
-.system{
+.system {
     margin: 2.5% 0;
     text-align: center;
     display: block;
@@ -159,8 +223,7 @@ ul{
 
 }
 
-
-.system span{
+.system span {
     display: inline-block;
     padding: 0 5%;
     font-size: 1em;
@@ -169,21 +232,21 @@ ul{
     background-color: #dcdcdc;
 }
 
-.message .player{
-  /* height: 0.22%; */
+.message .player {
+    /* height: 0.22%; */
     float: left;
     margin: 0 3% 0 0;
     border-radius: 3px;
 }
 
-.main .player{
-  /* height: 0.2%; */
+.main .player {
+    /* height: 0.2%; */
     float: left;
     margin: 0 3% 0 0;
     border-radius: 3px;
 }
 
-.message .self_text{
+.message .self_text {
     display: inline-block;
     position: relative;
     padding: 0 2%;
@@ -196,14 +259,13 @@ ul{
     word-break: break-all;
     /* background-color: #fafafa; */
     border-radius: 4px;
-    border-top:none;
+    border-top: none;
     background-color: #b2e281;
     float: right;
 
+}
 
-  }
-
-  .message .self_text::before{
+.message .self_text::before {
     content: " ";
     position: absolute;
     top: 9px;
@@ -212,12 +274,9 @@ ul{
     border: 6px solid transparent;
     border-right-color: transparent;
     border-left-color: #b2e281;
-  }
-  
+}
 
-
-
-.message .player_text{
+.message .player_text {
     display: inline-block;
     position: relative;
     padding: 0 2%;
@@ -231,13 +290,11 @@ ul{
     word-break: break-all;
     background-color: #fafafa;
     border-radius: 4px;
-    border-top:none;
+    border-top: none;
     float: left;
 }
 
-
-
-.message .player_text:before{
+.message .player_text:before {
     content: " ";
     position: absolute;
     top: 30%;
@@ -246,7 +303,7 @@ ul{
     border-right-color: #fafafa;
 }
 
-ul{
+ul {
     display: block;
     /* list-style-type: disc;
     margin-block-start: 1em;
@@ -260,7 +317,7 @@ ul{
   position:relative;
 } */
 
-.player_list li{
+.player_list li {
     padding: 4% 6%;
     border-bottom: 1px solid #292c33;
     cursor: pointer;
@@ -268,53 +325,72 @@ ul{
     transition: background-color .1s;
 }
 
-.player_list .player{
+.player_list .player {
     vertical-align: middle;
     border-radius: 2px;
+    width: 20%;
 }
 
-
-.player_name{
+.player_name {
     display: inline-block;
     margin: 0 0 0 9%;
     vertical-align: middle;
     /* font-size:0.1em; */
 }
 
-.btn.btn-default.btn-xs{
+.btn.btn-default.btn-xs {
     margin: 0 0 0 17%;
-    z-index:0;
+    z-index: 0;
 }
 
-.active{
-    background:url(../pic/welcome.JPG);
-    background-color: rgba(255, 255, 255, 0.1);
-    background-blend-mode: lighten;
-    /* border-radius: 2px; */
-}
-.active:hover{
-    background:url(../pic/welcome.JPG);
+
+.active {
+    background: url(../pic/welcome.JPG);
     background-color: rgba(255, 255, 255, 0.1);
     background-blend-mode: lighten;
     /* border-radius: 2px; */
 }
 
-.dead{
-    background:url(../pic/welcome.JPG);
+.active:hover {
+    background: url(../pic/welcome.JPG);
+    background-color: rgba(255, 255, 255, 0.1);
+    background-blend-mode: lighten;
+    /* border-radius: 2px; */
+}
+
+.dead {
+    background: url(../pic/welcome.JPG);
     background-color: rgba(255, 255, 255, 0.3);
     background-blend-mode: lighten;
 }
 
-#send_btn{
+#send_btn {
     position: absolute;
     top: 73%;
     right: 5%;
     z-index: 0;
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     border: none;
     /*border: red 1px solid;*/
 }
 
+footer{
+    /*background-color: #4B3D2A;*/
+    background-color: rgba(0,0,0,0.8);
+    text-align:right;
+    color: white;
+    padding-top: 3%;
+    padding-bottom: 1%;
+    padding-right: 5%;
+    height: 30%;
+
+
+}
+
+font{
+    /* text-align:center; */
+    color: white;
+}
 
 /* .choose{
   float:left;
@@ -324,3 +400,34 @@ ul{
 /* .uni{
   position:relative;
 } */
+
+
+/****************************************************************************************/
+.playerInfo{
+    background-color: rgba(255,255,255,0.2);
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 3%;
+    padding-bottom: 3%;
+}
+
+.playerInfo table{
+    width: 90%;
+}
+
+.playerInfo:hover{
+    background-color: rgba(255,255,255,0.4);
+}
+
+.showPlayerInfo{
+    text-align: right;
+}
+
+.playerInfo{
+    display: none;
+}
+
+.player_lb:hover .playerInfo{
+    display: block;
+}

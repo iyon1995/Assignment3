@@ -19,8 +19,7 @@ $gameService = new GameService();
 
 $status = $gameService -> canVote($roomId);
 
-if($status == "V"){
-    $status = '{"status":"' .$status. '"}';
-    echo $status;
-}
+
+$status = '{"status":"' .$status. '"}';
+echo $status;
 ?>

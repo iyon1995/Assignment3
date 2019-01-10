@@ -6,20 +6,24 @@
 </head>
 <body onload="aaa()">
 <script type="text/javascript">
-    function aaa(){
+    /*function aaa(){
         setTimeout(function(){
             if(document.getElementById("aaa").getAttribute("hidden") == null){
                 bbb();
             }
         },5000);
-    }
+    }*/
     function bbb(){
         var content = document.getElementById("asd").value;
         alert(content);
         document.getElementById("aaa").setAttribute("hidden","");
     }
+    function ccc(){
+        alert("asd");
+        window.location.href = "LivingRoom.html";
+    }
 </script>
 <textarea id="asd"></textarea>
-<input type="button" onclick="bbb()" id="aaa" value="submit">
+<input type="button" onclick="ccc()" id="aaa" value="submit">
 </body>
 </html>

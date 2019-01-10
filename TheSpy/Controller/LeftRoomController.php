@@ -34,5 +34,7 @@ delCookie("isJoin");
 delCookie("turn");
 delCookie("exp");
 
+echo "left";
+
 
 ?>

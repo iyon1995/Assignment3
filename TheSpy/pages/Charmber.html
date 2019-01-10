@@ -120,17 +120,27 @@
                             }
 
                             var img = "pic/welcome.JPG";
+                            var exp = info_obj[i].level;
+                            var level = expConversion(exp);
                             players += "<li class=\"default\" ";
                             players += "id=\"p_"+info_obj[i].userId + "\" name=\"active_player\">" ;
-                            players += "<div>";
-                            players += "<img class=\"player\" width=\"34\" height=\"34\" src=\"" + img + "\">";
+                            players += "<div class='player_lb' onmouseover='showPlayerInfo(event);' onmouseleave='hidePlayerInfo(event)'>";
+                            players += "<img class=\"player\" src=\"" + img + "\">";
                             players += "<p class=\"player_name\" id=\"plst_name_" + info_obj[i].userId + "\">" + info_obj[i].userName + "</p>";
                             players += "<p hidden name=\"plst_id\" id=\"plst_id_" + info_obj[i].userId + "\">" + info_obj[i].userId + "</p>";
                             players += "<p hidden id=\"plst_img_" + info_obj[i].userId + "\">" + img + "</p>";
-                            players += "<p hidden id=\"plst_lvl_" + info_obj[i].userId + "\">" + info_obj[i].level + "</p>";
+                            players += "<p hidden id=\"plst_lvl_" + info_obj[i].userId + "\">" + level + "</p>";
                             players += "<p hidden id=\"plst_gR_" + info_obj[i].userId + "\">" + info_obj[i].gRound + "</p>";
                             players += "<p hidden id=\"plst_gWR_" + info_obj[i].userId + "\">" + info_obj[i].gWRound + "</p>";
                             players += "<p hidden id=\"plst_gWSR_" + info_obj[i].userId + "\">" + info_obj[i].gWSRound + "</p>";
+                            players += "<div name='playerInfo' class='playerInfo'>";
+                            players += "<table>";
+                            players += "<tr><td>Level: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].level + "</td></tr>";
+                            players += "<tr><td>General Games: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gRound + "</td></tr>";
+                            players += "<tr><td>Winning Games: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gWRound + "</td></tr>";
+                            players += "<tr><td>Win as a Spy: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gWSRound + "</td></tr>";
+                            players += "</table>";
+                            players += "</div>";
                             players += "</div></li>";
 
                         }
@@ -145,7 +155,7 @@
                         }
                     }
                 }
-            }
+            };
             HttpXmlObject.send(data);
         }
     }
@@ -362,34 +372,36 @@
                     if (HttpXmlObject.status == 200) {
                         var info = HttpXmlObject.responseText;
                         var info_obj = eval("(" + info + ")");
-                        $("stage").value = "V";
-                        if($("myStatus").value != "D"){
-                            var activePlayerList = document.getElementsByName("active_player");
-                            for (var i = 0; i < activePlayerList.length; i++) {
-                                var candidate = activePlayerList[i].id;
-                                candidate = candidate.replace("p_","");
-                                activePlayerList[i].setAttribute("class","active");
-                                activePlayerList[i].setAttribute("onclick","doVote(\'" + candidate + "\')");
+                        if(info_obj.status == "V"){
+                            $("stage").value = "V";
+                            if($("myStatus").value != "D"){
+                                var activePlayerList = document.getElementsByName("active_player");
+                                for (var i = 0; i < activePlayerList.length; i++) {
+                                    var candidate = activePlayerList[i].id;
+                                    candidate = candidate.replace("p_","");
+                                    activePlayerList[i].setAttribute("class","active");
+                                    activePlayerList[i].setAttribute("onclick","doVote(\'" + candidate + "\')");
+                                }
+
+                                var imgPath = "pic/welcome.jpg";
+                                var date = getDate();
+
+                                var displayBoard = $("display_board");
+
+                                var formerText = displayBoard.innerHTML;
+
+                                var content = "Now you have 1 min to choose one player to Vote on the player list!!!";
+
+                                var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
+
+                                var completeText = formerText + updateText;
+                                displayBoard.innerHTML = completeText;
+                                timeoutVote();
                             }
-
-                            var imgPath = "pic/welcome.jpg";
-                            var date = getDate();
-
-                            var displayBoard = $("display_board");
-
-                            var formerText = displayBoard.innerHTML;
-
-                            var content = "Now you have 1 min to choose one player to Vote on the player list!!!";
-
-                            var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
-
-                            var completeText = formerText + updateText;
-                            displayBoard.innerHTML = completeText;
-                            timeoutVote();
                         }
                     }
                 }
-            }
+            };
             HttpXmlObject.send(data);
         }
     }
@@ -585,9 +597,11 @@
     /**
      * left room
      */
-    function leftRoom(){
-        var mess = "Please do not leave the room during the game. This may cause inconvenience to other players. " +
-            "Additionally it will cause punishment to yourself as well!!";
+    function leftRoom(type){
+        if(type != 0){
+            var mess = "Please do not leave the room during the game. This may cause inconvenience to other players. " +
+                "Additionally it will cause punishment to yourself as well!!";
+        }
         window.confirm(mess);
         var HttpXmlObject = getXmlHttpObject();
         if (HttpXmlObject) {
@@ -596,7 +610,6 @@
             var roomId = $("room_id").innerHTML;
             if (roomId != "") {
                 data = "roomId=" + roomId;
-                alert(data);
             }
             HttpXmlObject.open("post", url, true);
             HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -634,8 +647,10 @@
                     if (HttpXmlObject.status == 200) {
                         var info = HttpXmlObject.responseText;
                         if(info ==  "E"){
+                            document.getElementsByTagName("body")[0].removeAttribute("onbeforeunload");
                             alert("game is over. Now jump to Living Room");
-                            window.location.href = "livingRoom.html";
+                            //window.location.href = "livingRoom.html";
+                            leftRoom(0);
                         }
                     }
                 }
@@ -708,7 +723,7 @@
     }
 
     //call dispatcher to send request
-    window.setInterval("dispatcher()", 5000);
+    window.setInterval("dispatcher()", 1000);
 
     /**
      * dispatch functions according to the stage
@@ -755,7 +770,7 @@
 </script>
 </head>
 
-<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber')" >
+<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber');getPlayerList();" onbeforeunload="return leavingMess(event)">
 <div id="size">
     <!--=====================================================================================================================-->
     <!--=====================================================================================================================-->
@@ -842,7 +857,7 @@
 
 </div>
 <div class="leave_charmber">
-    <button type="button" name="button" id="leave_charmber" onmouseover="showWordsTopRight()" onclick="leftRoom()">Leave Room</button>
+    <button type="button" name="button" id="leave_charmber" onmouseover="showWordsTopRight()" onclick="leftRoom(1)">Leave Room</button>
     <font id="some_words" hidden>Hello,@wxy please do not leave</font>
 </div>
 

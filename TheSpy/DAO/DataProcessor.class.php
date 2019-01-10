@@ -594,6 +594,16 @@ class DataProcessor{
         }
     }
 
+    public function ownerLeftRoom($sql,$roomId){
+        $sql_stmt = $this -> conn -> prepare($sql);
+        $sql_stmt -> bind_param("i",$roomId);
+        $sql_stmt -> execute();
+        $isSucc = $sql_stmt -> affected_rows;
+        $sql_stmt -> free_result();
+        $sql_stmt -> close();
+        return $isSucc;
+    }
+
 
     public function conn_close(){
         if (!empty($this->conn)) {

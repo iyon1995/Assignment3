@@ -38,6 +38,8 @@ $exp = getCookieVal("exp");
 $userService = new UserService();
 $userService -> settleAccounts($userId,$exp,$result);
 
+
+
 echo "E";
 
 

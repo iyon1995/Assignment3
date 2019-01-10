@@ -328,6 +328,7 @@ ul {
 .player_list .player {
     vertical-align: middle;
     border-radius: 2px;
+    width: 20%;
 }
 
 .player_name {
@@ -341,6 +342,7 @@ ul {
     margin: 0 0 0 17%;
     z-index: 0;
 }
+
 
 .active {
     background: url(../pic/welcome.JPG);
@@ -398,3 +400,34 @@ font{
 /* .uni{
   position:relative;
 } */
+
+
+/****************************************************************************************/
+.playerInfo{
+    background-color: rgba(255,255,255,0.2);
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 3%;
+    padding-bottom: 3%;
+}
+
+.playerInfo table{
+    width: 90%;
+}
+
+.playerInfo:hover{
+    background-color: rgba(255,255,255,0.4);
+}
+
+.showPlayerInfo{
+    text-align: right;
+}
+
+.playerInfo{
+    display: none;
+}
+
+.player_lb:hover .playerInfo{
+    display: block;
+}

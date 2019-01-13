@@ -39,10 +39,10 @@ class UserService
      * @param $password
      */
     public function register($userId,$userName,$password){
-        $isUni = $this -> uniqueEmail();
-        if($isUni == 1){
+        $isUni = $this -> uniqueEmail($userId);
+        if($isUni != 1){
             $user = new User($userId,$userName,$password,"S");
-            $sql = "insert into T_USER_MDL (ID,USER_NAME,PASSWORD,STATUS) values(?,?,md5(?),?);";
+            $sql = "insert into T_USER_MDL (ID,USER_NAME,PASSWORD,STATUS,LEVEL,G_ROUND,GW_ROUND,GWS_ROUND) values(?,?,md5(?),?,0,0,0,0);";
             $dao = new DataProcessor();
             $dao -> register($sql,$user);
             $dao -> conn_close();
@@ -58,11 +58,11 @@ class UserService
      * @param $userId
      */
     public function uniqueEmail($userId){
-        $sql = "select t.id from T_USER_MDL t where t.ID = ?";
+        $sql = "select t.ID from T_USER_MDL t where t.ID = ?";
         $dao = new DataProcessor();
         $id = $dao -> uniqueEmail($sql,$userId);
         $dao -> conn_close();
-        if($id != ""){
+        if($id == null){
             $isUni = 0;
         }else{
             $isUni = 1;

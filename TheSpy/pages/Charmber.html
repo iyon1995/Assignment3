@@ -1,776 +1,785 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Charmber</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="css/charmber.css">
-<script type="text/javascript" src="../js/tools.js"></script>
-<script type="text/javascript">
-
-    /**
-     * show some words
-     * */
-    function showWordsTopRight(){
-        //$("some_words").removeAttribute("hidden");
-    }
-    /**
-     * hide rule
-     * */
-    function hideRule(){
-        //$("help_menu").setAttribute("hidden","");
-        var havBar = $("navBox");
-        if(havBar.getAttribute("hidden") == null){
-            havBar.setAttribute("hidden","");
-        }else{
-            havBar.removeAttribute("hidden");
-        }
-
-    }
-
-    /**
-     * set the initial size of the page
-     */
-    function setSize(){
-      var height = window.innerHeight + "px";
-      var width = window.innerWidth + "px";
-      //var style = "height:" + height + "px;width:" + width + "px";
-      //alert(style);
-      //$("aaa").setAttribute("style",style);
-      //alert(height);
-
-      $("size").style.width = ""+width+"";
-      $("size").style.height = ""+height+"";
-    }
-
-    /**
-     * get room information
-     */
-    function getRoomInfo() {
-        var HttpXmlObject = getXmlHttpObject();
-        var roomId = getRequestFromUrl("roomId");
-        if (HttpXmlObject) {
-            var url = "../Controller/GetRoomInfoController.php";
-            var data = "";
-            if (roomId != "") {
-                data = "getRoomInfo=" + roomId;
+    <meta charset="UTF-8">
+    <title>Charmber</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/charmber.css">
+    <link rel="stylesheet" href="css/general.css">
+    <script type="text/javascript" src="../js/tools.js"></script>
+    <script type="text/javascript">
+        /**
+         * hide rule
+         * */
+        function hideRule() {
+            //$("help_menu").setAttribute("hidden","");
+            var havBar = $("navBox");
+            if (havBar.getAttribute("hidden") == null) {
+                havBar.setAttribute("hidden", "");
             } else {
-                data = "getRoomInfo=owner";
+                havBar.removeAttribute("hidden");
             }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        $("display_roomId").innerHTML = "Room : " + info_obj.roomId;
-                        $("room_id").innerHTML = info_obj.roomId;
-                        $("room_type").innerHTML = info_obj.roomTpye;
-                        $("player_num").innerHTML = info_obj.playerNum;
-                        $("is_reveal").innerHTML = info_obj.isRreveal;
-                        $("difficulty").innerHTML = info_obj.difficulty;
-                        $("stage").value = info_obj.status;
-                        var roomInfo = "Room:"+ info_obj.roomId +" ";
-                        if(info_obj.isRreveal == "R"){
-                            roomInfo += "Identity: reveal ";
-                        }else{
-                            roomInfo += "Identity: unreveal ";
-                        }
-                        if(info_obj.difficulty == "E"){
-                            roomInfo += "Easy ";
-                        }else{
-                            roomInfo += "Hard ";
-                        }
 
-                        $("room_info").innerHTML = roomInfo;
-                    }
-                }
-            }
-            HttpXmlObject.send(data);
         }
-    }
 
-    /**
-     * 1.get player list of the room
-     * 2.get user information
-     */
-    function getPlayerList() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/GetPlayersController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        var players = "<ul>";
-                        for (var i = 0; i < info_obj.length; i++) {
-                            if(i == 0){
-                                $("owner_id").innerHTML = info_obj[0].userId;
-                                //$("owner_name").innerHTML = info_obj[0].userName;
-                            }
+        /**
+         * set the initial size of the page
+         */
+        function setSize() {
+            var height = window.innerHeight + "px";
+            var width = window.innerWidth + "px";
+            //var style = "height:" + height + "px;width:" + width + "px";
+            //alert(style);
+            //$("aaa").setAttribute("style",style);
+            //alert(height);
 
-                            var img = "pic/welcome.JPG";
-                            var exp = info_obj[i].level;
-                            var level = expConversion(exp);
-                            players += "<li class=\"default\" ";
-                            players += "id=\"p_"+info_obj[i].userId + "\" name=\"active_player\">" ;
-                            players += "<div class='player_lb' onmouseover='showPlayerInfo(event);' onmouseleave='hidePlayerInfo(event)'>";
-                            players += "<img class=\"player\" src=\"" + img + "\">";
-                            players += "<p class=\"player_name\" id=\"plst_name_" + info_obj[i].userId + "\">" + info_obj[i].userName + "</p>";
-                            players += "<p hidden name=\"plst_id\" id=\"plst_id_" + info_obj[i].userId + "\">" + info_obj[i].userId + "</p>";
-                            players += "<p hidden id=\"plst_img_" + info_obj[i].userId + "\">" + img + "</p>";
-                            players += "<p hidden id=\"plst_lvl_" + info_obj[i].userId + "\">" + level + "</p>";
-                            players += "<p hidden id=\"plst_gR_" + info_obj[i].userId + "\">" + info_obj[i].gRound + "</p>";
-                            players += "<p hidden id=\"plst_gWR_" + info_obj[i].userId + "\">" + info_obj[i].gWRound + "</p>";
-                            players += "<p hidden id=\"plst_gWSR_" + info_obj[i].userId + "\">" + info_obj[i].gWSRound + "</p>";
-                            players += "<div name='playerInfo' class='playerInfo'>";
-                            players += "<table>";
-                            players += "<tr><td>Level: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].level + "</td></tr>";
-                            players += "<tr><td>General Games: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gRound + "</td></tr>";
-                            players += "<tr><td>Winning Games: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gWRound + "</td></tr>";
-                            players += "<tr><td>Win as a Spy: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gWSRound + "</td></tr>";
-                            players += "</table>";
-                            players += "</div>";
-                            players += "</div></li>";
-
-                        }
-                        players += "</ul>";
-                        $("player_list").innerHTML = players;
-                        if (info_obj.length == $("player_num").innerHTML && $("stage").value == "I") {
-                            if (getRequestFromUrl("roomId") == "") {
-                                var herf = $("owner_control");
-                                herf.removeAttribute("hidden");
-                            }
-                            $("stage").value = "S";
-                        }
-                    }
-                }
-            };
-            HttpXmlObject.send(data);
+            $("size").style.width = "" + width + "";
+            $("size").style.height = "" + height + "";
         }
-    }
 
-    /**
-     * initial game
-     */
-    function iniGame() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/IniGameController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            var playerNum = $("player_num").innerHTML;
-            var difficulty = $("difficulty").innerHTML;
-            if (roomId != "" && playerNum != "" && difficulty != "") {
-                data = "roomId=" + roomId + "&playerNum=" + playerNum + "&difficulty=" + difficulty;
-
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        if (info_obj.status == "D") {
-                            $("stage").value = "S";
-                        }
-                        //$("start_game").setAttribute("hidden", "");
-                        $("owner_control").setAttribute("hidden", "");
-
-                    }
+        /**
+         * get room information
+         */
+        function getRoomInfo() {
+            var HttpXmlObject = getXmlHttpObject();
+            var roomId = getRequestFromUrl("roomId");
+            if (HttpXmlObject) {
+                var url = "../Controller/GetRoomInfoController.php";
+                var data = "";
+                if (roomId != "") {
+                    data = "getRoomInfo=" + roomId;
+                } else {
+                    data = "getRoomInfo=owner";
                 }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * determine whether the game is start
-     */
-    function isStart() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/Module1.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        if (info_obj.status == "D") {
-                            var words = "Your word is:";
-                            if (info_obj.isSpy == "S") {
-                                words += info_obj.sWord;
-                                //$("other_word").value = info_obj.nWord;
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("display_roomId").innerHTML = "Room : " + info_obj.roomId;
+                            $("room_id").innerHTML = info_obj.roomId;
+                            $("room_type").innerHTML = info_obj.roomTpye;
+                            $("player_num").innerHTML = info_obj.playerNum;
+                            $("is_reveal").innerHTML = info_obj.isRreveal;
+                            $("difficulty").innerHTML = info_obj.difficulty;
+                            $("stage").value = info_obj.status;
+                            var roomInfo = "Room:" + info_obj.roomId + " ";
+                            if (info_obj.isRreveal == "R") {
+                                roomInfo += "Identity: reveal ";
                             } else {
-                                words += info_obj.nWord;
-                                //$("other_word").value = info_obj.sWord;
+                                roomInfo += "Identity: unreveal ";
                             }
-                            if ($("is_reveal").innerHTML == "U") {
-                                if(info_obj.isSpy == "S"){
-                                    words += "<br/>(you are the spy!)";
-                                }
+                            if (info_obj.difficulty == "E") {
+                                roomInfo += "Easy ";
+                            } else {
+                                roomInfo += "Hard ";
                             }
-                            $("identity").value = info_obj.isSpy;
-                            $("assigned_word").innerHTML = words;
-                            //$("given_word").value = words;
-                            $("stage").value = "D";
-                            //$("game_area").removeAttribute("hidden");
-                            $("assigned_word").removeAttribute("hidden");
 
+                            $("room_info").innerHTML = roomInfo;
                         }
                     }
                 }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * determine whether the player can speak
-     */
-    function canISpeak() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/RightToSpeakController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
+                HttpXmlObject.send(data);
             }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        if (info_obj.canTalk == "A") {
-                            $("stage").value = "A";
-                            $("send_btn").removeAttribute("hidden");
-                            $("user_input").removeAttribute("readonly");
-                            $("user_input").setAttribute("onkeydown","keySend(event)");
+        }
 
-                            var imgPath = "pic/welcome.jpg";
-                            var date = getDate();
-                            var displayBoard = $("display_board");
-                            var formerText = displayBoard.innerHTML;
-                            var content = "Now you have 1 min to describe the word you get!!!";
-                            var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
-
-                            var completeText = formerText + updateText;
-                            displayBoard.innerHTML = completeText;
-
-                            //$("talk_area").removeAttribute("hidden");
-                            timeoutEdit();
-                        }else if($("myStatus").value == "D"){
-                            $("stage").value = "A";
-                        }
-                    }
+        /**
+         * 1.get player list of the room
+         * 2.get user information
+         */
+        function getPlayerList() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/GetPlayersController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
                 }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * 1.send message
-     * 2.over 1 min send message automatically
-     * @param timeout
-     */
-    function sendMess(timeout) {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/SendMessageController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            var content = $("user_input").value;
-            if(timeout == 1){
-                content += "(timeout)";
-            }
-            content = content.trim();
-            if (roomId != "") {
-                data = "roomId=" + roomId + "&content=" + content;
-                //alert(data);
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        if (info_obj.isSucc == "S") {
-                            var selfId = info_obj.userId;
-                            var imgId = "plst_img_" + selfId;
-                            var imgPath = $(imgId).innerHTML;
-                            var date = getDate();
-                            var userName = $("plst_name_" + selfId).innerHTML;
-
-                            var displayBoard = $("display_board");
-
-                            var formerText = displayBoard.innerHTML;
-
-                            var updateText = htmlDisplayMess(selfId,userName,content,date,imgPath,"right");
-
-                            var completeText = formerText + updateText;
-                            displayBoard.innerHTML = completeText;
-                            $("send_btn").setAttribute("hidden", "");
-                            $("user_input").removeAttribute("onkeydown");
-                            $("user_input").value = "";
-                            $("user_input").setAttribute("readonly","readonly");
-                            /*var mess = info_obj.userId;
-                            mess += " (" + date + ") :\r\n";
-                            mess += "&#09;" + content + "\r\n";
-                            var chatBox = $("chat_box").innerHTML;
-                            chatBox += mess;
-                            $("chat_box").innerHTML = chatBox;
-                            $("chat_box").scrollTop = $("chat_box").scrollHeight;
-                            $("talk_area").setAttribute("hidden", "");*/
-                        }
-                    }
-                }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * 1.determine whether the player can vote
-     * 2.over 1 min vote himself automatically
-     */
-    function canVote() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/CanVoteController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        if(info_obj.status == "V"){
-                            $("stage").value = "V";
-                            if($("myStatus").value != "D"){
-                                var activePlayerList = document.getElementsByName("active_player");
-                                for (var i = 0; i < activePlayerList.length; i++) {
-                                    var candidate = activePlayerList[i].id;
-                                    candidate = candidate.replace("p_","");
-                                    activePlayerList[i].setAttribute("class","active");
-                                    activePlayerList[i].setAttribute("onclick","doVote(\'" + candidate + "\')");
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var players = "<ul>";
+                            for (var i = 0; i < info_obj.length; i++) {
+                                if (i == 0) {
+                                    $("owner_id").innerHTML = info_obj[0].userId;
+                                    //$("owner_name").innerHTML = info_obj[0].userName;
                                 }
+
+                                var img = "pic/welcome.JPG";
+                                var exp = info_obj[i].level;
+                                var level = expConversion(exp);
+                                players += "<li class=\"default\" ";
+                                players += "id=\"p_" + info_obj[i].userId + "\" name=\"active_player\">";
+                                players += "<div class='player_lb' onmouseover='showPlayerInfo(event);' onmouseleave='hidePlayerInfo(event)'>";
+                                players += "<img class=\"player\" src=\"" + img + "\">";
+                                players += "<p class=\"player_name\" id=\"plst_name_" + info_obj[i].userId + "\">" + info_obj[i].userName + "</p>";
+                                players += "<p hidden name=\"plst_id\" id=\"plst_id_" + info_obj[i].userId + "\">" + info_obj[i].userId + "</p>";
+                                players += "<p hidden id=\"plst_img_" + info_obj[i].userId + "\">" + img + "</p>";
+                                players += "<p hidden id=\"plst_lvl_" + info_obj[i].userId + "\">" + level + "</p>";
+                                players += "<p hidden id=\"plst_gR_" + info_obj[i].userId + "\">" + info_obj[i].gRound + "</p>";
+                                players += "<p hidden id=\"plst_gWR_" + info_obj[i].userId + "\">" + info_obj[i].gWRound + "</p>";
+                                players += "<p hidden id=\"plst_gWSR_" + info_obj[i].userId + "\">" + info_obj[i].gWSRound + "</p>";
+                                players += "<div name='playerInfo' class='playerInfo'>";
+                                players += "<table>";
+                                players += "<tr><td>Level: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].level + "</td></tr>";
+                                players += "<tr><td>General Games: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gRound + "</td></tr>";
+                                players += "<tr><td>Winning Games: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gWRound + "</td></tr>";
+                                players += "<tr><td>Win as a Spy: </td><td name='showPlayerInfo' class='showPlayerInfo'>" + info_obj[i].gWSRound + "</td></tr>";
+                                players += "</table>";
+                                players += "</div>";
+                                players += "</div></li>";
+
+                            }
+                            players += "</ul>";
+                            $("player_list").innerHTML = players;
+                            if (info_obj.length == $("player_num").innerHTML && $("stage").value == "I") {
+                                if (getRequestFromUrl("roomId") == "") {
+                                    var herf = $("owner_control");
+                                    herf.removeAttribute("hidden");
+                                }
+                                $("stage").value = "S";
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * initial game
+         */
+        function iniGame() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/IniGameController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var playerNum = $("player_num").innerHTML;
+                var difficulty = $("difficulty").innerHTML;
+                if (roomId != "" && playerNum != "" && difficulty != "") {
+                    data = "roomId=" + roomId + "&playerNum=" + playerNum + "&difficulty=" + difficulty;
+
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.status == "D") {
+                                $("stage").value = "S";
+                            }
+                            //$("start_game").setAttribute("hidden", "");
+                            $("owner_control").setAttribute("hidden", "");
+
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * determine whether the game is start
+         */
+        function isStart() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/Module1.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.status == "D") {
+                                var words = "Your word is:";
+                                if (info_obj.isSpy == "S") {
+                                    words += info_obj.sWord;
+                                    //$("other_word").value = info_obj.nWord;
+                                } else {
+                                    words += info_obj.nWord;
+                                    //$("other_word").value = info_obj.sWord;
+                                }
+                                if ($("is_reveal").innerHTML == "U") {
+                                    if (info_obj.isSpy == "S") {
+                                        words += "<br/>(you are the spy!)";
+                                    }
+                                }
+                                $("identity").value = info_obj.isSpy;
+                                $("assigned_word").innerHTML = words;
+                                //$("given_word").value = words;
+                                $("stage").value = "D";
+                                //$("game_area").removeAttribute("hidden");
+                                $("assigned_word").removeAttribute("hidden");
 
                                 var imgPath = "pic/welcome.jpg";
                                 var date = getDate();
+                                var displayBoard = $("display_board");
+                                var formerText = displayBoard.innerHTML;
+                                var content = words + ", please describe it.";
+                                var updateText = htmlDisplayMess("system", "@System", content, date, imgPath, "left");
+                                var completeText = formerText + updateText;
+                                displayBoard.innerHTML = completeText;
+
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * determine whether the player can speak
+         */
+        function canISpeak() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/RightToSpeakController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.canTalk == "A") {
+                                $("stage").value = "A";
+                                $("send_btn").removeAttribute("hidden");
+                                $("user_input").removeAttribute("readonly");
+                                $("user_input").setAttribute("onkeydown", "keySend(event)");
+
+                                var imgPath = "pic/welcome.jpg";
+                                var date = getDate();
+                                var displayBoard = $("display_board");
+                                var formerText = displayBoard.innerHTML;
+                                var content = "Now you have 1 min to describe the word you get!!!";
+                                var updateText = htmlDisplayMess("system", "@System", content, date, imgPath, "left");
+
+                                var completeText = formerText + updateText;
+                                displayBoard.innerHTML = completeText;
+
+                                //$("talk_area").removeAttribute("hidden");
+                                timeoutEdit();
+                            } else if ($("myStatus").value == "D") {
+                                $("stage").value = "A";
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * 1.send message
+         * 2.over 1 min send message automatically
+         * @param timeout
+         */
+        function sendMess(timeout) {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/SendMessageController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var content = $("user_input").value;
+                if (timeout == 1) {
+                    content += "(timeout)";
+                }
+                content = content.trim();
+                if (roomId != "") {
+                    data = "roomId=" + roomId + "&content=" + content;
+                    //alert(data);
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.isSucc == "S") {
+                                var selfId = info_obj.userId;
+                                var imgId = "plst_img_" + selfId;
+                                var imgPath = $(imgId).innerHTML;
+                                var date = getDate();
+                                var userName = $("plst_name_" + selfId).innerHTML;
 
                                 var displayBoard = $("display_board");
 
                                 var formerText = displayBoard.innerHTML;
 
-                                var content = "Now you have 1 min to choose one player to Vote on the player list!!!";
-
-                                var updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
+                                var updateText = htmlDisplayMess(selfId, userName, content, date, imgPath, "right");
 
                                 var completeText = formerText + updateText;
                                 displayBoard.innerHTML = completeText;
-                                timeoutVote();
+                                $("send_btn").setAttribute("hidden", "");
+                                $("user_input").removeAttribute("onkeydown");
+                                $("user_input").value = "";
+                                $("user_input").setAttribute("readonly", "readonly");
+                                /*var mess = info_obj.userId;
+                                 mess += " (" + date + ") :\r\n";
+                                 mess += "&#09;" + content + "\r\n";
+                                 var chatBox = $("chat_box").innerHTML;
+                                 chatBox += mess;
+                                 $("chat_box").innerHTML = chatBox;
+                                 $("chat_box").scrollTop = $("chat_box").scrollHeight;
+                                 $("talk_area").setAttribute("hidden", "");*/
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * 1.determine whether the player can vote
+         * 2.over 1 min vote himself automatically
+         */
+        function canVote() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/CanVoteController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            if (info_obj.status == "V") {
+                                $("stage").value = "V";
+                                if ($("myStatus").value != "D") {
+                                    var activePlayerList = document.getElementsByName("active_player");
+                                    for (var i = 0; i < activePlayerList.length; i++) {
+                                        var candidate = activePlayerList[i].id;
+                                        candidate = candidate.replace("p_", "");
+                                        activePlayerList[i].setAttribute("class", "active");
+                                        activePlayerList[i].setAttribute("onclick", "doVote(\'" + candidate + "\')");
+                                    }
+
+                                    var imgPath = "pic/welcome.jpg";
+                                    var date = getDate();
+
+                                    var displayBoard = $("display_board");
+
+                                    var formerText = displayBoard.innerHTML;
+
+                                    var content = "&longleftarrow; Now you have 1 min to choose one player to Vote on the player list!!!";
+
+                                    var updateText = htmlDisplayMess("system", "@System", content, date, imgPath, "left");
+
+                                    var completeText = formerText + updateText;
+                                    displayBoard.innerHTML = completeText;
+                                    timeoutVote();
+                                }
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * get message
+         */
+        function doGetMess() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/GetMessageController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            for (var i = 0; i < info_obj.length; i++) {
+
+                                var userId = info_obj[i].sender;
+                                var imgId = "plst_img_" + userId;
+                                var imgPath = $(imgId).innerHTML;
+                                var date = info_obj[i].sendTime;
+                                var displayBoard = $("display_board");
+                                var formerText = displayBoard.innerHTML;
+                                var content = info_obj[i].content;
+                                var userName = $("plst_name_" + userId).innerHTML;
+
+                                var updateText = htmlDisplayMess(userId, userName, content, date, imgPath, "left");
+
+                                var completeText = formerText + updateText;
+                                displayBoard.innerHTML = completeText;
+                                displayBoard.scrollTop = displayBoard.scrollHeight;
+                                var myId = info_obj[0].receiver;
+                                var myStatus = $("myStatus");
+                                myStatus.setAttribute("name", myId);
+
+                                /*var message = info_obj[i].sender + " (" + info_obj[i].sendTime + ") : \r\n";
+                                 message += "&#09;" + info_obj[i].content + "\r\n";
+                                 var chatBox = $("chat_box");
+                                 var app =chatBox.innerHTML;
+                                 app += message;
+                                 chatBox.innerHTML = app;
+                                 chatBox.scrollTop = chatBox.scrollHeight;
+                                 var me = info_obj[0].receiver;
+                                 var myStatus = $("me");
+                                 myStatus.setAttribute("name",me); */
+                            }
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+
+        /**
+         * vote player
+         * @param candidate
+         */
+        function doVote(candidate) {
+            var name = $("plst_name_" + candidate).innerHTML;
+            confirm("Do you really want to vote " + name + "????");
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/VoteController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "" && candidate != "") {
+                    data = "roomId=" + roomId + "&candidate=" + candidate;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+
+                            $("stage").value = info_obj.status;
+                            var activePlayerList = document.getElementsByName("active_player");
+                            for (var i = 0; i < activePlayerList.length; i++) {
+                                activePlayerList[i].setAttribute("class", "default");
+                                activePlayerList[i].removeAttribute("onclick");
                             }
                         }
                     }
                 }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * get message
-     */
-    function doGetMess() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/GetMessageController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
+                HttpXmlObject.send(data);
             }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        for (var i = 0; i < info_obj.length; i++) {
+        }
 
-                            var userId = info_obj[i].sender;
-                            var imgId = "plst_img_" + userId;
-                            var imgPath = $(imgId).innerHTML;
-                            var date = info_obj[i].sendTime;
+        /**
+         * determine whether all players have already voted
+         */
+        function allVoted() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/CheckAllVotedController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                var playerNum = $("player_num").innerHTML;
+                if (roomId != "" && playerNum != "") {
+                    data = "roomId=" + roomId + "&playerNum=" + playerNum;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            $("stage").value = info_obj.status;
+                        }
+                    }
+                }
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * get the result of the game
+         */
+        function doGetResult() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/GetResultController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var result = info_obj.result;
+                            var results = result.split(" ");
+                            var dead = results[0];
+                            var identity = results[1];
+                            var isWin = results[2];
+                            var isSpy = $("identity").value;
+                            var stage = info_obj.status;
+                            if (dead == "NONE") {
+                                var content = "No one die tonight.";
+                            } else {
+                                var li = $("p_" + dead);
+                                li.setAttribute("name", "dead_player");
+                                if (dead == $("myStatus").name) {
+                                    $("myStatus").value = "D";
+                                }
+                                var name = $("plst_name_" + dead).innerHTML;
+                                var content = name + " is dead";
+                                if ($("is_reveal").innerHTML == "U") {
+                                    content += " He/she is " + identity + ".";
+                                }
+                            }
+                            if (isWin == "T") {
+                                content += " Next Round!!"
+                            } else {
+                                stage = "E";
+                                if (isWin == isSpy) {
+                                    content += " You are the winner!!";
+                                    $("result").value = "W";
+                                } else {
+                                    content += " You lose!";
+                                    $("result").value = "L";
+                                }
+                            }
+                            var imgPath = "pic/welcome.jpg";
+                            var date = getDate();
                             var displayBoard = $("display_board");
                             var formerText = displayBoard.innerHTML;
-                            var content = info_obj[i].content;
-                            var userName = $("plst_name_" + userId).innerHTML;
-
-                            var updateText = htmlDisplayMess(userId,userName,content,date,imgPath,"left");
-
+                            updateText = htmlDisplayMess("system", "@System", content, date, imgPath, "left");
                             var completeText = formerText + updateText;
                             displayBoard.innerHTML = completeText;
                             displayBoard.scrollTop = displayBoard.scrollHeight;
-                            var myId = info_obj[0].receiver;
-                            var myStatus = $("myStatus");
-                            myStatus.setAttribute("name",myId);
+                            $("stage").value = stage;
 
-                            /*var message = info_obj[i].sender + " (" + info_obj[i].sendTime + ") : \r\n";
-                            message += "&#09;" + info_obj[i].content + "\r\n";
-                            var chatBox = $("chat_box");
-                            var app =chatBox.innerHTML;
-                            app += message;
-                            chatBox.innerHTML = app;
-                            chatBox.scrollTop = chatBox.scrollHeight;
-                            var me = info_obj[0].receiver;
-                            var myStatus = $("me");
-                            myStatus.setAttribute("name",me); */
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * left room
+         */
+        function leftRoom(type) {
+            if (type != 0) {
+                var mess = "Please do not leave the room during the game. This may cause inconvenience to other players. " +
+                    "Additionally it will cause punishment to yourself as well!!";
+                window.confirm(mess);
+            }
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/LeftRoomController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            window.location.href = "livingRoom.html";
                         }
                     }
                 }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-
-    /**
-     * vote player
-     * @param candidate
-     */
-    function doVote(candidate) {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/VoteController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "" && candidate != "") {
-                data = "roomId=" + roomId + "&candidate=" + candidate;
+                HttpXmlObject.send(data);
             }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
+        }
 
-                        $("stage").value = info_obj.status;
-                        var activePlayerList = document.getElementsByName("active_player");
-                        for(var i=0; i < activePlayerList.length; i++){
-                            activePlayerList[i].setAttribute("class","default");
-                            activePlayerList[i].removeAttribute("onclick");
-                        }
-                    }
+        /**
+         * calculate the data of user's account
+         */
+        function doSettleAccounts() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/SettleAccountsController.php";
+                var data = "";
+                var isSpy = $("identity").value;
+                var isWin = $("result").value;
+                if (isSpy != "" && isWin != "") {
+                    data = "isSpy=" + isSpy + "&isWin=" + isWin;
                 }
-            }
-            HttpXmlObject.send(data);
-        }
-    }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            if (info == "E") {
+                                $("body").removeAttribute("onbeforeunload");
+                                $("stage").value = "F";
+                                //window.location.href = "livingRoom.html";
+                                setTimeout(function(){
+                                    alert("game is over. Now jump to Living Room");
+                                    leftRoom(0);
+                                    },10000);
 
-    /**
-     * determine whether all players have already voted
-     */
-    function allVoted(){
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/CheckAllVotedController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            var playerNum = $("player_num").innerHTML;
-            if (roomId != "" && playerNum != "") {
-                data = "roomId=" + roomId + "&playerNum=" + playerNum;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        $("stage").value = info_obj.status;
-                    }
-                }
-            }
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * get the result of the game
-     */
-    function doGetResult() {
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/GetResultController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        var result = info_obj.result;
-                        var results = result.split(" ");
-                        var dead = results[0];
-                        var identity = results[1];
-                        var isWin = results[2];
-                        var isSpy = $("identity").value;
-                        var stage = info_obj.status;
-                        if(dead == "NONE"){
-                            var content = "No one die tonight.";
-                        }else{
-                            var li = $("p_" + dead);
-                            li.setAttribute("name","dead_player");
-                            if(dead == $("myStatus").name){
-                                $("myStatus").value = "D";
-                            }
-                            var content = dead + " is dead";
-                            if($("is_reveal").innerHTML == "U"){
-                                content += " He/she is " + identity + ".";
                             }
                         }
-                        if(isWin == "T"){
-                            content += " Next Round!!"
-                        }else{
-                            stage = "E";
-                            if(isWin == isSpy){
-                                content += " You are the winner!!";
-                                $("result").value = "W";
-                            }else{
-                                content += " You lose!";
-                                $("result").value = "L";
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
+
+        /**
+         * determine whether the game is finish
+         */
+        function isEnd() {
+            var HttpXmlObject = getXmlHttpObject();
+            if (HttpXmlObject) {
+                var url = "../Controller/IsEndController.php";
+                var data = "";
+                var roomId = $("room_id").innerHTML;
+                if (roomId != "") {
+                    data = "roomId=" + roomId;
+                }
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var status = info_obj.status;
+                            if (status == "N") {
+                                //alert(status);
+                                $("stage").value = "E";
                             }
                         }
-                        var imgPath = "pic/welcome.jpg";
-                        var date = getDate();
-                        var displayBoard = $("display_board");
-                        var formerText = displayBoard.innerHTML;
-                        updateText = htmlDisplayMess("system","@System",content,date,imgPath,"left");
-                        var completeText = formerText + updateText;
-                        displayBoard.innerHTML = completeText;
-                        displayBoard.scrollTop = displayBoard.scrollHeight;
-                        $("stage").value = stage;
+                    }
+                };
+                HttpXmlObject.send(data);
+            }
+        }
 
+        /**
+         * over 1 min send message automatically
+         */
+        function timeoutEdit() {
+            setTimeout(function () {
+                if ($("send_btn").getAttribute("hidden") == null) {
+                    sendMess(1);
+                }
+            }, 1000 * 60);
+        }
+
+        /**
+         * over 1 min vote himself automatically
+         */
+        function timeoutVote() {
+            setTimeout(function () {
+                var hasVoted = 0;
+                var activePlayerList = document.getElementsByName("active_player");
+                for (var i = 0; i < activePlayerList.length; i++) {
+                    if (activePlayerList[i].getAttribute("onclick") != null) {
+                        hasVoted = 1;
+                        break;
                     }
                 }
-            };
-            HttpXmlObject.send(data);
+                if (hasVoted != 0) {
+                    var myStatus = $("myStatus");
+                    var candidate = myStatus.name;
+                    doVote(candidate);
+                }
+            }, 1000 * 60);
         }
-    }
 
-    /**
-     * left room
-     */
-    function leftRoom(type){
-        if(type != 0){
-            var mess = "Please do not leave the room during the game. This may cause inconvenience to other players. " +
+        //call dispatcher to send request
+        window.setInterval("dispatcher()", 1000);
+
+        /**
+         * dispatch functions according to the stage
+         */
+        function dispatcher() {
+            isEnd();
+            var gameStage = $("stage").value;
+            if (gameStage == "I") {
+                getPlayerList();
+            } else if (gameStage == "S") {
+                isStart();
+            } else if (gameStage == "D") {
+                canISpeak();
+                doGetMess();
+            } else if (gameStage == "A") {
+                doGetMess();
+                canVote();
+                doGetMess();
+            } else if (gameStage == "V") {
+                allVoted();
+            } else if (gameStage == "R") {
+                doGetResult();
+            } else if (gameStage == "E") {
+                doSettleAccounts();
+            }
+        }
+
+        /**
+         * send message by press enter
+         * @param event
+         */
+        function keySend(event) {
+            var key = event.code;
+            if (key == "Enter") {
+                sendMess(0);
+            }
+        }
+
+        function leavingMess(event) {
+            return "Please do not leave the room during the game. This may cause inconvenience to other players. " +
                 "Additionally it will cause punishment to yourself as well!!";
         }
-        window.confirm(mess);
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/LeftRoomController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        // TODO
-                        window.location.href = "livingRoom.html";
-                    }
-                }
-            }
-            HttpXmlObject.send(data);
-        }
-    }
 
-    /**
-     * calculate the data of user's account
-     */
-    function doSettleAccounts(){
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/SettleAccountsController.php";
-            var data = "";
-            var isSpy = $("identity").value;
-            var isWin = $("result").value;
-            if (isSpy != "" && isWin != "") {
-                data = "isSpy=" + isSpy + "&isWin=" + isWin;
-                //alert(data);
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        if(info ==  "E"){
-                            document.getElementsByTagName("body")[0].removeAttribute("onbeforeunload");
-                            alert("game is over. Now jump to Living Room");
-                            //window.location.href = "livingRoom.html";
-                            leftRoom(0);
-                        }
-                    }
-                }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * determine whether the game is finish
-     */
-    function isEnd(){
-        var HttpXmlObject = getXmlHttpObject();
-        if (HttpXmlObject) {
-            var url = "../Controller/IsEndController.php";
-            var data = "";
-            var roomId = $("room_id").innerHTML;
-            if (roomId != "") {
-                data = "roomId=" + roomId;
-            }
-            HttpXmlObject.open("post", url, true);
-            HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            HttpXmlObject.onreadystatechange = function () {
-                if (HttpXmlObject.readyState == 4) {
-                    if (HttpXmlObject.status == 200) {
-                        var info = HttpXmlObject.responseText;
-                        var info_obj = eval("(" + info + ")");
-                        var status = info_obj.status;
-                        if(status == "N"){
-                            alert(status);
-                            $("stage").value = "E";
-                        }
-                    }
-                }
-            };
-            HttpXmlObject.send(data);
-        }
-    }
-
-    /**
-     * over 1 min send message automatically
-     */
-    function timeoutEdit(){
-        setTimeout(function(){
-            if($("send_btn").getAttribute("hidden") == null){
-                sendMess(1);
-            }
-        },1000 * 60);
-    }
-
-    /**
-     * over 1 min vote himself automatically
-     */
-    function timeoutVote(){
-        setTimeout(function(){
-            var hasVoted = 0;
-            var activePlayerList = document.getElementsByName("active_player");
-            for (var i = 0; i < activePlayerList.length; i++) {
-                if(activePlayerList[i].getAttribute("onclick") != null){
-                    hasVoted = 1;
-                    break;
-                }
-            }
-            if(hasVoted != 0){
-                var myStatus = $("myStatus");
-                var candidate = myStatus.name;
-                doVote(candidate);
-            }
-        },1000 * 60);
-    }
-
-    //call dispatcher to send request
-    window.setInterval("dispatcher()", 1000);
-
-    /**
-     * dispatch functions according to the stage
-     */
-    function dispatcher() {
-        isEnd();
-        var gameStage = $("stage").value;
-        if (gameStage == "I") {
-            getPlayerList();
-        } else if (gameStage == "S") {
-            isStart();
-        } else if (gameStage == "D") {
-            canISpeak();
-            doGetMess();
-        } else if (gameStage == "A") {
-            doGetMess();
-            canVote();
-            doGetMess();
-        } else if(gameStage == "V"){
-            allVoted();
-        } else if(gameStage == "R"){
-            doGetResult();
-        } else if(gameStage == "E"){
-            doSettleAccounts();
-        }
-    }
-
-    /**
-     * send message by press enter
-     * @param event
-     */
-    function keySend(event) {
-        var key = event.code;
-        if(key == "Enter"){
-            sendMess(0);
-        }
-    }
-
-    function leavingMess(event){
-        return "Please do not leave the room during the game. This may cause inconvenience to other players. " +
-            "Additionally it will cause punishment to yourself as well!!";
-    }
-
-</script>
+    </script>
 </head>
 
-<body onload="getRoomInfo();setSize();checkIllegalLogin('Charmber');getPlayerList();" onbeforeunload="return leavingMess(event)">
+<body id="body" onload="getRoomInfo();setSize();checkIllegalLogin('Charmber');getPlayerList();"
+      onbeforeunload="return leavingMess(event)">
 <div id="size">
     <!--=====================================================================================================================-->
     <!--=====================================================================================================================-->
@@ -816,7 +825,8 @@
                     <!--<p id="owner_name" hidden>@owner</p>-->
                     <p id="owner_id" hidden>@owner</p>
                     <div class="owner_control" hidden id="owner_control">
-                        <input type="button" name="button" class="btn btn-link" value="StartGame" id="start_game" onclick="iniGame()">
+                        <input type="button" name="button" class="btn btn-link" value="StartGame" id="start_game"
+                               onclick="iniGame()">
                     </div>
                     <div class="owner_control" hidden id="assigned_word">
                     </div>
@@ -824,7 +834,7 @@
             </div>
             <div class="player_list" id="player_list">
                 <ul>
-                    <li id="player_" >
+                    <li id="player_">
                         <div hidden>
                             <input type="text" id="" status="">
                         </div>
@@ -844,7 +854,8 @@
                 </ul>
             </div>
             <div class="text">
-                <textarea id="user_input" name="textarea" rows="8" cols="80" onkeydown="keySend(event)" readonly="readonly"></textarea>
+                <textarea id="user_input" name="textarea" rows="8" cols="80" onkeydown="keySend(event)"
+                          readonly="readonly"></textarea>
                 <input hidden type="button" id="send_btn" onclick="sendMess(0)" value="send(Enter)">
             </div>
             <!--<input hidden type="button" id="send_btn" onclick="sendMess()" value="send">-->
@@ -857,7 +868,9 @@
 
 </div>
 <div class="leave_charmber">
-    <button type="button" name="button" id="leave_charmber" onmouseover="showWordsTopRight()" onclick="leftRoom(1)">Leave Room</button>
+    <button type="button" name="button" id="leave_charmber" onmouseover="showWordsTopRight()" onclick="leftRoom(1)">
+        Leave Room
+    </button>
     <font id="some_words" hidden>Hello,@wxy please do not leave</font>
 </div>
 
@@ -865,8 +878,8 @@
 <div id="help_menu">
 
 
-        <div class="navH">
-        <img class="obscure" src="pic/obscure.png" width="30%" alt="" onclick="hideRule()">
+    <div class="navH">
+        <img id="obscure" src="pic/obscure.png" width="30%" alt="" onclick="hideRule()">
         <b style="font-size:1.4em; float: right; margin-right: 35%">Game rules</b>
     </div>
     <div id="navBox" class="navBox">

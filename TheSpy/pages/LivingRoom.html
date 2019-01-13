@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name=”viewport” content=”width=device-width, initial-scale=1″>
     <title>LivingRoom</title>
+    <link rel="stylesheet" href="css/general.css">
     <link id="link" rel="stylesheet" href="css/LivingRoom.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -101,13 +102,32 @@
             $("room_id").removeAttribute("hidden");
             $("search_room").removeAttribute("hidden");
         }
+        function logout(){
+            confirm("Do you really want to log out???");
+            window.location.href="../Controller/LogOutController.php";
+
+        }
+
     </script>
 
 </head>
-<body onload="checkIllegalLogin('LivingRoom')" style="margin: 8px;">
+<body onload="checkIllegalLogin('LivingRoom');displayUserInfo()" style="margin: 8px;">
 <div class="mainholder">
+    <div class="user">
+        <img class="obscure" src="pic/obscure.png">
+        <div id="user_name" name="rui.song@stud.th-luebeck.de">rui.song</div>
+        <div id="user_info">
+            <table>
+                <tr><th>ID(E-mail):</th><td colspan="3" id="user_id">rui.song@stud.th-luebeck.de</td></tr>
+                <tr><th>User Name:</th><td id="user_nm">rui.song</td><th>Level</th><td id="level">3</td></tr>
+                <tr><th>Rounds played:</th><td id="g_rounds">50</td><th>Rounds won:</th><td id="gw_rounds">4</td></tr>
+                <tr><th>Win as Spy:</th><td id="gws_rounds">1</td><th>Win Rate:</th><td id="win_rate">8%</td></tr>
+            </table>
+            <input type="button" value="log out" onclick="logout()">
+        </div>
+    </div>
     <img id="pic" src="pic/bg_living.jpg" alt="">
-    <div><button type="button" class="btn btn-link" style="color:black">logout</button></div>
+    <!--<div><button type="button" id="logout" style="color:black">logout</button></div>-->
     <div class="subholder">
         <table style="border-spacing:0px 10px;" class="buttons">
             <tr>
@@ -164,5 +184,10 @@
     </div>
 
 </div>
+<footer>
+    <!--<font>Who is the spy GAME</font><br>-->
+    <font>provided and supported by: Rui.Song Xiyuan.Wang Xiaoan.Sun</font><br>
+    <!--<font>content us by email:</font><br>-->
+</footer>
 </body>
 </html>

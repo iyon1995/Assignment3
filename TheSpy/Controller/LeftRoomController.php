@@ -11,11 +11,17 @@
 require_once '../tools/CookieTools.php';
 require_once '../Service/RoomService.class.php';
 require_once '../Service/UserService.class.php';
+require_once '../Service/GameService.class.php';
 require_once '../tools/PhpValidate.php';
 
 if(!empty($_POST['roomId'])){
     $roomId = $_POST['roomId'];
 }
+
+$userId = getCookieVal("userId");
+
+$gameService = new GameService();
+$gameService -> suicide($userId,$roomId);
 
 $roomService = new RoomService();
 $owner = getCookieVal("owner");
@@ -24,7 +30,6 @@ if($owner != ""){
 }
 
 $exp = getCookieVal("exp");
-$userId = getCookieVal("$userId");
 $userService = new UserService();
 $userService -> setExp($userId,$exp);
 

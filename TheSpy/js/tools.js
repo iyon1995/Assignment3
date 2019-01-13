@@ -70,7 +70,7 @@ function checkIllegalLogin(location){
                     var info_obj = eval("(" + info + ")");
                     var isLegal = info_obj.errno;
                     if(isLegal == 1){
-                        window.location.href = "../Login.html"
+                        window.location.href = "../index.html"
                     }
                 }
             }
@@ -161,3 +161,50 @@ function expConversion(exp){
     return level;
 }
 
+
+/**
+ * get user's info
+ * @returns {boolean}
+ */
+function displayUserInfo(){
+    var HttpXmlObject = getXmlHttpObject();
+    if (HttpXmlObject) {
+        var url = "../Controller/GetPlayerInfoController.php";
+        var data = "";
+        HttpXmlObject.open("post", url, true);
+        HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        HttpXmlObject.onreadystatechange = function () {
+            if (HttpXmlObject.readyState == 4) {
+                if (HttpXmlObject.status == 200) {
+                    var info = HttpXmlObject.responseText;
+                    var info_obj = eval("(" + info + ")");
+                    var userId = info_obj.userId;
+                    var userName = info_obj.userName;
+                    var exp = info_obj.level;
+                    var level = expConversion(exp);
+                    var gRound = info_obj.gRound;
+                    var gWRound = info_obj.gWRound;
+                    var gWSRound = info_obj.gWSRound;
+                    var winRate = 0;
+                    if(gRound != 0){
+                        winRate = (gWRound/gRound * 100).toFixed(2);
+                    }
+
+                    winRate += "%";
+
+                    $("user_name").name = userId;
+                    $("user_name").innerHTML = userName;
+                    $("user_id").innerHTML = userId;
+                    $("user_nm").innerHTML = userName;
+                    $("level").innerHTML = level;
+                    $("g_rounds").innerHTML = gRound;
+                    $("gw_rounds").innerHTML = gWRound;
+                    $("gws_rounds").innerHTML = gWSRound;
+                    $("win_rate").innerHTML = winRate;
+                }
+            }
+        };
+        HttpXmlObject.send(data);
+    }
+    return true;
+}

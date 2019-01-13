@@ -316,6 +316,20 @@ class GameService
     }
 
     /**
+     * For player leave room
+     * @param $userId
+     * @param $roomId
+     * @return int
+     */
+    function suicide($userId,$roomId){
+        $sql = "update TEMP_ROOM_" .$roomId. " set STATUS = 'D' where PLAYER = ?";
+        $dataProcessor = new DataProcessor();
+        $isSucc = $dataProcessor -> setDead($sql,$userId);
+        $dataProcessor -> conn_close();
+        return $isSucc;
+    }
+
+    /**
      * For owner to check if the Result is the finial result
      * @param $roomId
      * @return array

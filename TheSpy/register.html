@@ -1,76 +1,122 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+<head>
     <meta charset="utf-8">
-    <title>Register</title>
+    <meta name=”viewport” content=”width=device-width, initial-scale=1″>
+    <link id="link" rel="stylesheet" href="pages/css/welcome.css">
+    <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah|Permanent+Marker" rel="stylesheet">
+    <title>The Spy</title>
+    <script type="text/javascript" src="js/tools.js"></script>
+    <script type="text/javascript" src="js/validate.js"></script>
     <script type="text/javascript">
-      function checkEmail(){
 
-        var email = document.getElementById("email");
-        if(email.value == null || email.value == ""){
-                alert("please input email address!");
-                return;
-            }
-        var regExp = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
-        if(!regExp.test(email.value)){
-                alert("the email address is not valid!");
-                return;
+        function doRegister(){
+            var userId = $("email").value;
+            var userName = $("user_name").value;
+            var password = $("fpassword").value;
+            var spassword = $("spassword").value;
+            var HttpXmlObject = getXmlHttpObject();
+            var roomId = getRequestFromUrl("roomId");
+            if (HttpXmlObject) {
+                var url = "Controller/RegisterController.php";
+                var data = "";
+                var errMess = checkEmail(userId);
+                if(errMess != ""){
+                    alert(errMess);
+                    return false;
                 }
+                errMess = comparePassword(password,spassword);
+                if(errMess != ""){
+                    alert(errMess);
+                    return false;
+                }
+
+                errMess = checkUserName(userName);
+                if(errMess != ""){
+                    alert(errMess);
+                    return false;
+                }
+                data = "userId=" + userId;
+                data += "&userName=" + userName;
+                data += "&password=" + password;
+                HttpXmlObject.open("post", url, true);
+                HttpXmlObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                HttpXmlObject.onreadystatechange = function () {
+                    if (HttpXmlObject.readyState == 4) {
+                        if (HttpXmlObject.status == 200) {
+                            var info = HttpXmlObject.responseText;
+                            var info_obj = eval("(" + info + ")");
+                            var err = info_obj.errMess;
+                            if(err == ""){
+                                window.location.href = "index.html";
+                            }else{
+                                alert(err);
+                            }
+
+                        }
+                    }
+                };
+                HttpXmlObject.send(data);
             }
+        }
 
 
 
-      function comparePassword(){
-        var fpassword = document.getElementById("fpassword").value;
-        var spassword = document.getElementById("spassword").value;
-
-        if(fpassword==null||fpassword==""||spassword==null||spassword==""){
-            alert("the passwords can not be empty!");
-        //console.log(fpassword);
-
-      }
-        if(fpassword.length<8 || fpassword.length>16){
-        alert("the length of passwords must be from 8 to 16");
-    //console.log(fpassword);
-
-      }
-
-        //console.log(fpassword);
-        if(fpassword!==spassword){
-                alert("the passwords are not the same!");
-                return;
-              }
-            }
-
-
+        function jumpToLogin() {
+            window.location.href = "index.html";
+        }
 
     </script>
-  </head>
-  <body>
-    <table>
-      <form class="registform" action="Controller/RegisterController.php" method="post">
-        <tr><th align="left">Your Email address</th></tr>
-        <tr><td><input id="email" type="text" name="email" value=""></td></tr>
-        <tr><th align="left">Your Password</th></tr>
-        <tr><td>(Length from 8 to 16. Letters, numbers, special charaters are all allowed)</td></tr>
-        <tr><td><input id="fpassword" type="password" name="fpassword" value=""></td></tr>
 
-        <tr>
-          <th align="left">Please repeat your Password</th>
-            </tr>
-          <tr>
+</head>
+<body>
+<div class="mainholder">
+    <img id="pic" src="pages/pic/welcome.jpg" alt="">
+    <div class="subholder">
+        <!--<p style="font-size:1.9em">Start the Game </p>-->
 
-          <td><input id="spassword" type="password" name="spassword" value=""></td>
-        </tr>
+        <p style="font-size:1.7em">register with your Email address</p>
+        <table>
+            <form class="registform" action="Controller/RegisterController.php" method="post">
+            </form>
+                <tr>
+                    <th align="left">Your Email address</th>
+                </tr>
+                <tr>
+                    <td><input id="email" type="text" name="email" value=""></td>
+                </tr>
+                <tr>
+                    <th align="left">Your User name</th>
+                </tr>
+                <tr>
+                    <td><input id="user_name" type="text" name="user_name" value=""></td>
+                </tr>
+                <tr>
+                    <th align="left">Your Password</th>
+                </tr>
+                <tr>
+                    <td>(Length from 8 to 16. Letters, numbers, special charaters are all allowed)</td>
+                </tr>
+                <tr>
+                    <td><input id="fpassword" type="password" name="fpassword" value=""></td>
+                </tr>
+                <tr>
+                    <th align="left">Please repeat your Password</th>
+                </tr>
+                <tr>
+                    <td><input id="spassword" type="password" name="spassword" value=""></td>
+                </tr>
+                <tr>
+                    <td><input type="submit" name="" value="SUBMIT" style="width:6em" class="button" onclick="doRegister()"></td>
+                </tr>
+        </table>
 
-        <tr>
-          <!--<td><input type="submit" name="" value="SUBMIT" style="width:6em" onclick="checkEmail(),comparePassword()"></td>-->
+        <span>Already have account?</span>
+        <input type="button" name="regist" value="press here to log in" style="width: 33%" onclick="jumpToLogin()"
+               class="button">
 
-          <td><input type="submit" name="" value="SUBMIT" style="width:6em" ></td>
-        </tr>
+    </div>
 
-      </form>
-    </table>
-
-  </body>
+</div>
+</body>
 </html>

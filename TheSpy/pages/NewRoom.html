@@ -3,71 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <title>New Room</title>
+    <link rel="stylesheet" href="css/general.css">
+    <link id="link" rel="stylesheet" href="css/welcome.css">
+    <script type="text/javascript" src="../js/tools.js"></script>
 </head>
-<body>
-<link id="link" rel="stylesheet" href="css/welcome.css">
-<script type="text/javascript" src="../js/tools.js"></script>
-<script type="text/javascript">
-    function showRoomNum(){
-        var roomid = getRequestFromUrl("roomid");
-        $("roomid").innerHTML = roomid;
-    }
-</script>
+<body onload="displayUserInfo()">
 <div class="mainholder">
-  <img id="pic" src="pic/welcome.jpg" alt="">
-  <div class="subholder">
-    <p style="font-size:1.9em">Choose the room type </p>
-    <p style="font-size:1.9em">Identity cover or not </p>
-    <p style="font-size:1.9em">Set Password</p>
+    <div class="user">
+        <img class="obscure" src="pic/obscure.png">
+        <div id="user_name" name="rui.song@stud.th-luebeck.de">rui.song</div>
+        <div id="user_info">
+            <table>
+                <tr><th>ID(E-mail):</th><td colspan="3" id="user_id">rui.song@stud.th-luebeck.de</td></tr>
+                <tr><th>User Name:</th><td id="user_nm">rui.song</td><th>Level</th><td id="level">3</td></tr>
+                <tr><th>Rounds played:</th><td id="g_rounds">50</td><th>Rounds won:</th><td id="gw_rounds">4</td></tr>
+                <tr><th>Win as Spy:</th><td id="gws_rounds">1</td><th>Win Rate:</th><td id="win_rate">8%</td></tr>
+            </table>
+            <input type="button" value="log out" onclick="logout()">
+        </div>
+    </div>
+    <img id="pic" src="pic/welcome.jpg" alt="">
+    <div class="subholder">
+        <p style="font-size:1.9em">Choose the room type </p>
+        <p style="font-size:1.9em">Identity cover or not </p>
+        <p style="font-size:1.9em">Set Password</p>
 
-<form method="post" action="../Controller/CreateRoomController.php">
-    <table>
-        <!--<tr>
-            <th>Room ID</th>
-            <th id="roomid"></th>
-        </tr>-->
-        <tr>
-            <th>Room Type</th>
-            <td>
-                <select name="room_type">
-                    <option value="Pu">enable matching</option>
-                    <option value="Pr">disable matching</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Game Mode</th>
-            <td>
-                <select name="is_reveal">
-                    <option value="R">Reveal the identity</option>
-                    <option value="U">Unreveal the identity</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Difficulty</th>
-            <td>
-                <select name="difficulty">
-                    <option value="E">Easy</option>
-                    <option value="H">Hard</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Player Number</th>
-            <td><input type="number" min="2" max="10" step="1" value="5" name="player_num"></td>
-        </tr>
-        <tr>
-            <th>password</th>
-            <td><input type="password" name="password"></td>
-        </tr>
-        <tr>
-            <td colspan="2"><input type="submit" value="Generate Room"></td>
-        </tr>
-    </table>
-</form>
+        <form method="post" action="../Controller/CreateRoomController.php">
+            <table>
+                <!--<tr>
+                    <th>Room ID</th>
+                    <th id="roomid"></th>
+                </tr>-->
+                <tr>
+                    <th>Room Type</th>
+                    <td>
+                        <select name="room_type">
+                            <option value="Pu">enable matching</option>
+                            <option value="Pr">disable matching</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Game Mode</th>
+                    <td>
+                        <select name="is_reveal">
+                            <option value="R">Reveal the identity</option>
+                            <option value="U">Unreveal the identity</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Difficulty</th>
+                    <td>
+                        <select name="difficulty">
+                            <option value="E">Easy</option>
+                            <option value="H">Hard</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Player Number</th>
+                    <td><input type="number" min="2" max="10" step="1" value="5" name="player_num"></td>
+                </tr>
+                <tr>
+                    <th>password</th>
+                    <td><input type="password" name="password"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Generate Room"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
 </div>
 
-    </div>
+<footer>
+    <!--<font>Who is the spy GAME</font><br>-->
+    <font>provided and supported by: Rui.Song Xiyuan.Wang Xiaoan.Sun</font><br>
+    <!--<font>content us by email:</font><br>-->
+</footer>
 </body>
 </html>

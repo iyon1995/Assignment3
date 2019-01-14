@@ -57,6 +57,14 @@ class User
         $this -> status = $status;
     }
 
+    public function __construct4($userId,$userName,$password,$status)
+    {
+        $this -> userId = $userId;
+        $this -> userName = $userName;
+        $this -> password = $password;
+        $this -> status = $status;
+    }
+
     public function __construct6($userId,$userName,$level,$gRound,$gwRound,$gwsRound)
     {
         $this -> userId = $userId;

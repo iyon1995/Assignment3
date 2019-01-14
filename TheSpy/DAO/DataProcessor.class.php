@@ -14,9 +14,9 @@ require_once '../Entity/Message.class.php';
 
 class DataProcessor{
     private $conn;
-    private $dbName = "spy_test";
+    private $dbName = "spy_pro";
     private $host = "127.0.0.1";
-    private $username = "spy_test";
+    private $username = "spy_pro";
     private $password = "thespy";
 
     public function __construct()

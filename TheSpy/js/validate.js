@@ -6,16 +6,14 @@
  * check validation of login password
  * @returns {string}
  */
-function comparePassword() {
-    var fpassword = document.getElementById("fpassword").value;
-    var spassword = document.getElementById("spassword").value;
+function comparePassword(fpassword,spassword) {
     var errMess = "";
     if(fpassword == ""){
-        errMess = "the passwords can not be empty!";
+        errMess = "The passwords can not be empty!";
     }else if(fpassword.length < 8 || fpassword.length > 16){
-        errMess = "the length of passwords must be from 8 to 16";
+        errMess = "The length of passwords must be from 8 to 16";
     }else if(fpassword != spassword){
-        errMess = "the passwords are not the same!";
+        errMess = "The passwords are not the same!";
     }
     return errMess;
 }
@@ -24,14 +22,24 @@ function comparePassword() {
  * check validation of email
  * @returns {string}
  */
-function checkEmail() {
-    var email = document.getElementById("email");
+function checkEmail(email) {
     var regExp = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
     var errMess = "";
-    if (email.value == "") {
-        errMess = "please input email address!";
-    }else if(!regExp.test(email.value)){
-        errMess = "the email address is not valid!";
+    if (email == "") {
+        errMess = "Please input email address!";
+    }else if(!regExp.test(email)){
+        errMess = "The email address is not valid!";
+    }
+    return errMess;
+}
+
+
+function checkUserName(userName){
+    var errMess = "";
+    if(userName == ""){
+        errMess = "The userName can not be empty!";
+    }else if(userName.length > 18){
+        errMess = "The length of userName must be less than 18!!!";
     }
     return errMess;
 }
